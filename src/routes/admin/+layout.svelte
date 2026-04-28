@@ -8,7 +8,7 @@
 
 <Sidebar.Provider>
 	<AppSidebar />
-	<Sidebar.Trigger />
+	<Sidebar.Trigger class="cursor-pointer" />
 	<main class="w-full p-3">
 		<ModeWatcher />
 		{@render children()}

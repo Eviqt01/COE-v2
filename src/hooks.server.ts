@@ -53,13 +53,8 @@ export const handle: Handle = async ({ event, resolve }) => {
 	const { user } = await event.locals.safeGetSession();
 	const path = event.url.pathname;
 
-	if (user && path === '/login') {
-		redirect(303, '/admin/Dashboard');
-	}
-
-	if (!user && path === '/admin/Dashboard') {
-		redirect(303, '/login');
-	}
+	if (!user && path.startsWith('/admin')) redirect(302, '/login');
+	if (user && path === '/login') redirect(302, '/admin');
 
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {

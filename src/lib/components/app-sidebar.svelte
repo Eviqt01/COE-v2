@@ -3,6 +3,7 @@
 	import DashboardIcon from '@lucide/svelte/icons/layout-dashboard';
 	import FileOutput from '@lucide/svelte/icons/file-output';
 	import RecordsVault from '@lucide/svelte/icons/archive';
+	import ArchiveRestore from '@lucide/svelte/icons/archive-restore';
 	import RizalIcons from '$lib/images/rizal_Icon.jpg';
 	import Logout from '@lucide/svelte/icons/log-out';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
@@ -27,9 +28,14 @@
 	};
 
 	const items = [
-		{ title: 'Dashboard', path: '/admin/Dashboard', icon: DashboardIcon },
+		{ title: 'Dashboard', path: '/admin', icon: DashboardIcon },
 		{ title: 'Create Certificate', path: '/admin/certificate', icon: FileOutput },
-		{ title: 'Records Vault', path: '/admin/record-vault', icon: RecordsVault }
+		{ title: 'Records Vault', path: '/admin/record-vault', icon: RecordsVault },
+		{
+			title: 'Archive Records',
+			path: '/admin/archive',
+			icon: ArchiveRestore
+		}
 	] as const;
 </script>
 
@@ -64,7 +70,7 @@
 	<div class="mb-4 flex flex-col gap-2">
 		<Button
 			onclick={handleLogout}
-			class="cursor-pointer border-0 bg-gray-300 text-black hover:bg-gray-500"
+			class="cursor-pointer border-0 bg-transparent text-black hover:bg-gray-200"
 			>Logout<Logout /></Button
 		>
 	</div>
