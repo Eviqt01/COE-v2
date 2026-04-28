@@ -3,35 +3,39 @@
 	import Paginator from '$lib/components/paginator.svelte';
 	import Offsetter from '$lib/components/offsetter.svelte';
 	import SearchStudents from './(components)/search-students.svelte';
-
+	import Actions from './(components)/actions.svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
 	const { data } = $props();
+
+	const tableHead = ['LRN', 'Full Name', 'School Year', 'Grade & Section', 'Action'];
 </script>
 
-<section class="p-4 md:p-6">
+<section class="flex flex-col gap-6 p-4 md:p-6">
 	<div class="flex items-center justify-end">
 		<SearchStudents />
 	</div>
 
-	<Table.Root>
+	<Table.Root class="border">
 		<Table.Header>
 			<Table.Row>
-				<Table.Head class="w-[100px]">LRN</Table.Head>
-				<Table.Head>Full Name</Table.Head>
-				<Table.Head>School Year</Table.Head>
-				<Table.Head class="text-end">Grade & Section</Table.Head>
+				{#each tableHead as head (head)}
+					<Table.Head class="w-[100px]">{head}</Table.Head>
+				{/each}
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
-			{#each data.students as student (student)}
+			{#each data.students ?? [] as student (student)}
 				<Table.Row>
 					<Table.Cell class="font-medium">{student.lrn}</Table.Cell>
 					<Table.Cell>{student.full_name}</Table.Cell>
 					<Table.Cell>{student.school_year}</Table.Cell>
 					<Table.Cell class="text-end">{student.grade_section}</Table.Cell>
+					<Table.Cell class="text-end">
+						<Actions {student} />
+					</Table.Cell>
 				</Table.Row>
 			{/each}
 		</Table.Body>

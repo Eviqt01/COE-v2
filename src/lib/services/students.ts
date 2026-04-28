@@ -55,6 +55,19 @@ export class StudentsServiceTB {
 
 		if (error) return { data: null, error: error.message };
 
-		return { data, error: null };
+		return { data: data as Students[], error: null };
+	}
+
+	async deleteStudent({ id, lrn }: { id: string; lrn: string }) {
+		if (!this.supabase) return { error: 'Supabase client not initialized' };
+
+		const { error } = await this.supabase.rpc('delete_student', {
+			p_id: id,
+			p_lrn: lrn
+		});
+
+		if (error) return { error: error.message };
+
+		return { error: null };
 	}
 }

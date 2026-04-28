@@ -1,16 +1,19 @@
 <script lang="ts">
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import AppSidebar from '$lib/components/app-sidebar.svelte';
-	import { ModeWatcher } from 'mode-watcher';
 
 	let { children } = $props();
 </script>
 
 <Sidebar.Provider>
 	<AppSidebar />
-	<Sidebar.Trigger class="cursor-pointer" />
-	<main class="w-full p-3">
-		<ModeWatcher />
-		{@render children()}
-	</main>
+
+	<section class="min-w-0">
+		<div class="border-b p-2">
+			<Sidebar.Trigger class="cursor-pointer" />
+		</div>
+		<div class="w-full p-3">
+			{@render children()}
+		</div>
+	</section>
 </Sidebar.Provider>
