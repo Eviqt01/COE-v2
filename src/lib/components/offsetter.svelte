@@ -20,7 +20,7 @@
 
 	const listOffsetsBasedOnTotalCount = (count: number): number[] => {
 		if (count <= 0) return [];
-		const eligible = PAGE_SIZE_PRESETS.filter(👎 => n <= count);
+		const eligible = PAGE_SIZE_PRESETS.filter((n) => n <= count);
 		if (eligible.length > 0) return eligible.slice(0, 4);
 		return [MIN_PAGE_SIZE];
 	};
@@ -41,7 +41,7 @@
 <!--
 @component
 Page-size control for tables: preset choices (10 / 20 / 50 / 100) are trimmed so none exceed
-totalCount (e.g. total 30 offers 10 and 20 only). If totalCount is below 10, the only preset
+`totalCount` (e.g. total 30 offers 10 and 20 only). If `totalCount` is below 10, the only preset
 offered is 10 (the minimum page size). Custom numeric input also updates the value.
 
 @prop {number} initialOffset - Starting page size (internal state only; changing the prop later does not reset state).
@@ -49,16 +49,17 @@ offered is 10 (the minimum page size). Custom numeric input also updates the val
 @prop {(offset: number) => void} onChange - Fires when the user picks a preset or commits a new value in the custom field.
 
 @example
-svelte
+```svelte
 <script lang="ts">
-	import Offsetter from '$lib/components/externals/table/components/offsetter/offsetter.svelte';
+    import Offsetter from '$lib/components/externals/table/components/offsetter/offsetter.svelte';
 </script>
 
 <Offsetter
-	initialOffset={10}
-	totalCount={30}
-	onChange={(offset) => console.log(offset)}
+    initialOffset={10}
+    totalCount={30}
+    onChange={(offset) => console.log(offset)}
 />
+```
 -->
 
 <DropdownMenu.Root>

@@ -43,4 +43,18 @@ export class StudentsServiceTB {
 
 		return { count, error: null };
 	}
+
+	async searchFullname({ searchTerm }: { searchTerm: string }) {
+		if (!this.supabase) return { data: null, error: 'Supabase client not initialized' };
+
+		const { data, error } = await this.supabase
+			.from('students')
+			.select('*')
+			.order('full_name', { ascending: true })
+			.textSearch('full_name', searchTerm);
+
+		if (error) return { data: null, error: error.message };
+
+		return { data, error: null };
+	}
 }
