@@ -42,7 +42,7 @@
 		<p class="text-center text-sm text-muted-foreground">Enter your email and password to login.</p>
 	</div>
 
-	<form method="POST" action="?/loginEvent" use:enhance class="mt-5 flex flex-col gap-2">
+	<form method="POST" action="?/loginEvent" use:enhance class="mt-5 flex flex-col gap-2 ">
 		<Form.Field {form} name="email">
 			<Form.Control>
 				{#snippet children({ props })}

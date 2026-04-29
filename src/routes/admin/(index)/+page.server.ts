@@ -1,4 +1,4 @@
-import type { PageServerLoad } from '../dashboard/$types';
+import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ locals }) => {
 	const userData = await locals.safeGetSession();

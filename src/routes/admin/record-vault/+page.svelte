@@ -10,40 +10,20 @@
 
 	const { data } = $props();
 
-	const tableHead = ['LRN', 'Full Name', 'School Year', 'Grade & Section', 'Action'];
+	const tableHead = ['LRN', 'Full Name', 'Grade & Section' , 'School Year', 'Action'];
 </script>
 
-<section class="flex flex-col gap-6 p-4 md:p-6">
-	<div class="flex items-center justify-end">
+<section class="flex flex-col gap-5 ">
+<div class="border p-5 rounded-md">
+	<h1 class="text-3xl font-bold">Records Vault</h1>
+	<p class="text-muted-foreground">Manage your Certificate</p>
+</div>
+	<div class="flex items-center justify-center">
+		<div >
 		<SearchStudents />
 	</div>
-
-	<Table.Root class="border">
-		<Table.Header>
-			<Table.Row>
-				{#each tableHead as head (head)}
-					<Table.Head class="w-[100px]">{head}</Table.Head>
-				{/each}
-			</Table.Row>
-		</Table.Header>
-		<Table.Body>
-			{#each data.students ?? [] as student (student)}
-				<Table.Row>
-					<Table.Cell class="font-medium">{student.lrn}</Table.Cell>
-					<Table.Cell>{student.full_name}</Table.Cell>
-					<Table.Cell>{student.school_year}</Table.Cell>
-					<Table.Cell class="text-end">{student.grade_section}</Table.Cell>
-					<Table.Cell class="text-end">
-						<Actions {student} />
-					</Table.Cell>
-				</Table.Row>
-			{/each}
-		</Table.Body>
-	</Table.Root>
-
-	{#if !data.searchTerm}
-		<div class="mt-6 flex flex-wrap items-center justify-between gap-4">
-			<Offsetter
+	<div class='ml-auto'>
+		<Offsetter 
 				initialOffset={data.offset}
 				totalCount={data.count ?? 0}
 				onChange={async (o) => {
@@ -58,6 +38,33 @@
 					await goto(resolve(path), { noScroll: true, replaceState: true });
 				}}
 			/>
+	</div>
+	</div>
+
+	<Table.Root class="border">
+		<Table.Header>
+			<Table.Row>
+				{#each tableHead as head (head)}
+					<Table.Head class="text-center font-bold">{head}</Table.Head>
+				{/each}
+			</Table.Row>
+		</Table.Header>
+		<Table.Body>
+			{#each data.students ?? [] as student (student)}
+				<Table.Row >
+					<Table.Cell class="font-medium text-center">{student.lrn}</Table.Cell>
+					<Table.Cell class='text-center'>{student.full_name}</Table.Cell>
+					<Table.Cell class="text-center">{student.grade_section}</Table.Cell>
+					<Table.Cell class='text-center'>{student.school_year}</Table.Cell>
+					<Table.Cell class="text-center">
+						<Actions {student} />
+					</Table.Cell>
+				</Table.Row>
+			{/each}
+		</Table.Body>
+	</Table.Root>
+
+	{#if !data.searchTerm}	
 			<Paginator
 				initialPage={data.what_page}
 				totalCount={data.count ?? 0}
@@ -73,6 +80,5 @@
 					await goto(resolve(path), { noScroll: true, replaceState: true });
 				}}
 			/>
-		</div>
 	{/if}
 </section>

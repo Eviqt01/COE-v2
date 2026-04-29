@@ -8,11 +8,11 @@
 <Sidebar.Provider>
 	<AppSidebar />
 
-	<section class="min-w-0">
-		<div class="border-b p-2">
+	<section class="w-full">
+		<div class="border-b p-1">
 			<Sidebar.Trigger class="cursor-pointer" />
 		</div>
-		<div class="w-full p-3">
+		<div class="w-full p-2">
 			{@render children()}
 		</div>
 	</section>
