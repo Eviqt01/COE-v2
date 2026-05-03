@@ -44,15 +44,14 @@ export class StudentsServiceTB {
 		return { count, error: null };
 	}
 
-	async searchFullname({ searchTerm }: { searchTerm: string }) {
+	async searchStudents({ searchTerm }: { searchTerm: string }) {
 		if (!this.supabase) return { data: null, error: 'Supabase client not initialized' };
 
 		const { data, error } = await this.supabase
 			.from('students')
 			.select('*')
 			.order('full_name', { ascending: true })
-			.textSearch('full_name', searchTerm);
-
+			.or(`full_name.ilike.%${searchTerm}%,lrn.ilike.%${searchTerm}`);
 		if (error) return { data: null, error: error.message };
 
 		return { data: data as Students[], error: null };

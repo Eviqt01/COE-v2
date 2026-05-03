@@ -4,6 +4,7 @@
 	import Ellipsis from '@lucide/svelte/icons/ellipsis';
 	import { buttonVariants } from '$lib/components/ui/button';
 	import { StudentsServiceTB } from '$lib/services/students';
+	import { StudentsArchiveServiceTB } from '$lib/services/students_archive';
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import { invalidateAll } from '$app/navigation';
@@ -16,7 +17,11 @@
 
 	const studentServiceFAC = new StudentsServiceTB(page.data.supabase);
 
+	const arhiveServiceFAC = new StudentsArchiveServiceTB(page.data.supabase);
+
 	let deleteLoader = $state(false);
+
+	let archiveLoader = $state(false);
 </script>
 
 <DropdownMenu.Root>
@@ -46,8 +51,19 @@
 				{deleteLoader ? 'Deleting' : 'Delete'}
 			</DropdownMenu.Item>
 			<DropdownMenu.Item
-				onclick={() => {
-					console.log(student);
+				disabled={archiveLoader}
+				onclick={async () => {
+					archiveLoader = true;
+
+					const { error } = await arhiveServiceFAC.archiveStudents({
+						id: student.id,
+						lrn: student.lrn
+					});
+
+					if (error) {
+						toast.error(error);
+					}
+					archiveLoader = false;
 				}}>Print</DropdownMenu.Item
 			>
 		</DropdownMenu.Group>

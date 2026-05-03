@@ -13,13 +13,17 @@
 	} from '$lib/components/ui/card/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
+	import DepedSeal from '$lib/images/depedSeal.png';
+	import principalSignature from '$lib/images/principalSignature.png';
+	import bagongPilipinas from '$lib/images/bagongPilipinas.png';
+	import depEdLogo from '$lib/images/depEdLogo.png';
+	import rizalLogo from '$lib/images/rizalLogo.png';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
 	import Download from '@lucide/svelte/icons/download';
 	import Printer from '@lucide/svelte/icons/printer';
 	import { parseDate } from 'chrono-node';
 	import { CalendarDate, getLocalTimeZone, type DateValue } from '@internationalized/date';
-	import { untrack } from 'svelte';
-	import { PDFDocument, StandardFonts } from 'pdf-lib';
+	import { untrack, onMount } from 'svelte';
 
 	const getOrdinalSuffix = (n: number): string => {
 		const mod100 = n % 100;
@@ -35,7 +39,8 @@
 				return 'th';
 		}
 	};
-	const formatDateInput = (date: DateValue | undefined) => {
+
+	const formatDateInput = (date: DateValue | undefined): string => {
 		if (!date) return '';
 		return date.toDate(getLocalTimeZone()).toLocaleDateString('en-US', {
 			day: '2-digit',
@@ -45,20 +50,18 @@
 	};
 
 	const formatCertDate = (date: DateValue | undefined) => {
-		if (!date) return { day: '', suffix: '', month: '', year: '', full: '' };
+		if (!date) return { day: '', suffix: '', month: '', year: '' };
 		const d = date.toDate(getLocalTimeZone());
 		const day = d.getDate();
 		return {
 			day: String(day),
 			suffix: getOrdinalSuffix(day),
 			month: d.toLocaleDateString('en-US', { month: 'long' }),
-			year: String(d.getFullYear()),
-			full: formatDateInput(date)
+			year: String(d.getFullYear())
 		};
 	};
 
 	const id = $props.id();
-
 	let open = $state(false);
 	let inputValue = $state('');
 	let value = $state<DateValue | undefined>(
@@ -73,144 +76,126 @@
 	let fullName = $state('');
 	let gradeSection = $state('');
 	let schoolYear = $state('');
-
 	let generating = $state(false);
-	let pdfUrl = $state<string | null>(null);
 	let errorMsg = $state('');
+	let librariesLoaded = $state(false);
 
 	const certDate = $derived(formatCertDate(value));
-
 	const isFormValid = $derived(
 		fullName.trim() !== '' &&
 			gradeSection.trim() !== '' &&
 			schoolYear.trim() !== '' &&
 			value !== undefined
 	);
+	const getLrnNameText = (): string => (lrn.trim() ? `${lrn}   ${fullName}` : fullName);
 
-	const getLrnNameText = (): string => {
-		if (lrn.trim()) return `${lrn}   ${fullName}`;
-		return fullName;
-	};
-
-	const generatePdfBytes = async (): Promise<Uint8Array> => {
-		errorMsg = '';
-		const templateBytes = await fetch('/Certificate_Of_Enrollment.pdf').then((r) => {
-			if (!r.ok) throw new Error(`Failed to load template: ${r.status}`);
-			return r.arrayBuffer();
+	const loadScript = (src: string): Promise<void> =>
+		new Promise((resolve, reject) => {
+			const existing = document.querySelector(`script[src="${src}"]`);
+			if (existing) {
+				resolve();
+				return;
+			}
+			const s = document.createElement('script');
+			s.src = src;
+			s.onload = () => resolve();
+			s.onerror = () => reject(new Error(`Failed to load ${src}`));
+			document.head.appendChild(s);
 		});
 
-		const pdfDoc = await PDFDocument.load(templateBytes);
-		const form = pdfDoc.getForm();
-		const font = await pdfDoc.embedFont(StandardFonts.TimesRoman);
-
-		const setField = (name: string, val: string): void => {
-			try {
-				const field = form.getTextField(name);
-				field.setText(val);
-				field.updateAppearances(font);
-			} catch (e) {
-				console.error(`Failed to fill field "${name}":`, e);
-			}
-		};
-
-		setField('LRN_Name', getLrnNameText());
-		setField('Grade_Section', gradeSection);
-		setField('School_Year', schoolYear);
-		setField('Month_Today', certDate.month);
-		setField('Year_Today', certDate.year);
-
-		setField('Date_Today', certDate.day);
-
+	onMount(async () => {
 		try {
-			const dayField = form.getTextField('Date_Today');
-			const suffixField = form.getTextField('Super_Script');
-
-			const dayWidget = dayField.acroField.getWidgets()[0];
-			const dayRect = dayWidget.getRectangle();
-
-			const dayWidth = font.widthOfTextAtSize(certDate.day || '0', 11);
-
-			const xOffset = certDate.day.length === 2 ? -2 : 0;
-			dayWidget.setRectangle({
-				x: dayRect.x + xOffset,
-				y: dayRect.y,
-				width: dayRect.width,
-				height: dayRect.height
-			});
-
-			const suffixWidget = suffixField.acroField.getWidgets()[0];
-			suffixWidget.setRectangle({
-				x: dayRect.x + dayWidth + xOffset + 3,
-				y: 360,
-				width: 19.54,
-				height: 9.61
-			});
-
-			suffixField.setText(certDate.suffix);
-			suffixField.setFontSize(8);
-			suffixField.updateAppearances(font);
-
-			const monthField = form.getTextField('Month_Today');
-			const monthWidget = monthField.acroField.getWidgets()[0];
-			const monthRect = monthWidget.getRectangle();
-
-			const longestMonthWidth = font.widthOfTextAtSize('September', 11);
-			const monthWidth = font.widthOfTextAtSize(certDate.month, 11);
-
-			const newOffset =
-				monthWidth < longestMonthWidth - 2 ? (longestMonthWidth - monthWidth) / 2 : 0;
-
-			monthWidget.setRectangle({
-				x: monthRect.x + newOffset,
-				y: monthRect.y,
-				width: monthRect.width,
-				height: monthRect.height
-			});
-		} catch (e) {
-			console.error('Failed to position superscript:', e);
-			setField('Super_Script', certDate.suffix);
+			await loadScript('https://unpkg.com/html2canvas-pro@1.5.8/dist/html2canvas-pro.min.js');
+			await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
+			librariesLoaded = true;
+		} catch {
+			errorMsg = 'Failed to load PDF libraries. Please refresh and try again.';
 		}
+	});
 
-		form.flatten();
-
-		const saved = await pdfDoc.save();
-		return new Uint8Array(saved);
+	const hideOnError = (e: Event): void => {
+		const img = e.currentTarget as HTMLImageElement;
+		img.style.display = 'none';
 	};
 
-	const updatePreview = async (): Promise<void> => {
-		if (!isFormValid) {
-			if (pdfUrl) {
-				URL.revokeObjectURL(pdfUrl);
-				pdfUrl = null;
-			}
-			return;
-		}
+	const generatePdfBlob = async (): Promise<Blob> => {
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		const w = window as any;
+		const html2canvasFn = w.html2canvasPro ?? w.html2canvas_pro ?? w.html2canvas;
+		if (!html2canvasFn) throw new Error('html2canvas-pro failed to load.');
+		const { jsPDF } = w.jspdf;
+
+		const source = document.getElementById('cert-preview-content');
+		if (!source) throw new Error('Certificate preview element not found.');
+
+		// Create an isolated wrapper at exact cert size off-screen
+		const wrapper = document.createElement('div');
+		wrapper.style.cssText = [
+			'position:fixed',
+			'left:-9999px',
+			'top:0',
+			'width:595px',
+			'height:790px',
+			'overflow:hidden',
+			'background:#ffffff',
+			'pointer-events:none',
+			'z-index:-1'
+		].join(';');
+
+		// Deep clone the cert into the wrapper
+		const clone = source.cloneNode(true) as HTMLElement;
+		clone.style.transform = 'none';
+		clone.style.position = 'relative';
+		clone.style.left = '0';
+		clone.style.top = '0';
+		clone.style.width = '595px';
+		clone.style.height = '790px';
+
+		wrapper.appendChild(clone);
+		document.body.appendChild(wrapper);
+
+		// Let browser paint the clone
+		await new Promise((r) => requestAnimationFrame(r));
+		await new Promise((r) => requestAnimationFrame(r));
+
+		let canvas: HTMLCanvasElement;
 		try {
-			const bytes = await generatePdfBytes();
-			const blob = new Blob([bytes.buffer as ArrayBuffer], { type: 'application/pdf' });
-			if (pdfUrl) URL.revokeObjectURL(pdfUrl);
-			pdfUrl = URL.createObjectURL(blob);
-		} catch (err: unknown) {
-			console.error('Preview failed:', err);
-			errorMsg = err instanceof Error ? err.message : 'Failed to generate preview';
+			canvas = await html2canvasFn(wrapper, {
+				scale: 3,
+				useCORS: true,
+				allowTaint: true,
+				letterRendering: false,
+				width: 595,
+				height: 790,
+				windowWidth: 595,
+				windowHeight: 790
+			});
+		} finally {
+			document.body.removeChild(wrapper);
 		}
+
+		const imgData = canvas.toDataURL('image/jpeg', 1.0);
+		const pdf = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' });
+		pdf.addImage(imgData, 'JPEG', 0, 0, 595.28, 841.89);
+		return pdf.output('blob');
 	};
 
 	const handleDownload = async (): Promise<void> => {
+		if (!librariesLoaded) {
+			errorMsg = 'Libraries not ready, please try again.';
+			return;
+		}
 		generating = true;
+		errorMsg = '';
 		try {
-			const bytes = await generatePdfBytes();
-			const blob = new Blob([bytes.buffer as ArrayBuffer], { type: 'application/pdf' });
+			const blob = await generatePdfBlob();
 			const url = URL.createObjectURL(blob);
 			const a = document.createElement('a');
 			a.href = url;
 			a.download = `Certificate_of_Enrollment_${lrn || fullName.replace(/\s+/g, '_')}.pdf`;
-			document.body.appendChild(a);
 			a.click();
-			document.body.removeChild(a);
-			setTimeout(() => URL.revokeObjectURL(url), 1000);
+			setTimeout(() => URL.revokeObjectURL(url), 60_000);
 		} catch (err: unknown) {
-			console.error('Download failed:', err);
 			errorMsg = err instanceof Error ? err.message : 'Failed to generate PDF';
 		} finally {
 			generating = false;
@@ -218,30 +203,42 @@
 	};
 
 	const handlePrint = async (): Promise<void> => {
+		if (!librariesLoaded) {
+			errorMsg = 'Libraries not ready, please try again.';
+			return;
+		}
 		generating = true;
+		errorMsg = '';
 		try {
-			const bytes = await generatePdfBytes();
-			const blob = new Blob([bytes.buffer as ArrayBuffer], { type: 'application/pdf' });
+			const blob = await generatePdfBlob();
 			const url = URL.createObjectURL(blob);
-			const printWindow = window.open(url, '_blank');
-			if (printWindow) {
-				printWindow.addEventListener('load', () => printWindow.print());
-			}
-			setTimeout(() => URL.revokeObjectURL(url), 60000);
+			const win = window.open(url, '_blank');
+			if (win) win.addEventListener('load', () => win.print());
+			setTimeout(() => URL.revokeObjectURL(url), 60_000);
 		} catch (err: unknown) {
-			console.error('Print failed:', err);
 			errorMsg = err instanceof Error ? err.message : 'Failed to generate PDF';
 		} finally {
 			generating = false;
 		}
 	};
 
+	let previewWrapper: HTMLDivElement | undefined = $state();
+	let scale = $state(1);
+
 	$effect(() => {
-		const _snapshot = `${lrn}|${fullName}|${gradeSection}|${schoolYear}|${String(value)}`;
-		void _snapshot;
-		void updatePreview();
+		if (!previewWrapper) return;
+		const observer = new ResizeObserver(() => {
+			scale = (previewWrapper?.offsetWidth ?? 595) / 595;
+		});
+		observer.observe(previewWrapper);
+		return () => observer.disconnect();
 	});
 </script>
+
+<svelte:head>
+	<link rel="preconnect" href="https://cdnjs.cloudflare.com" />
+	<link rel="preconnect" href="https://unpkg.com" />
+</svelte:head>
 
 <section>
 	<div class="mb-4 w-full space-y-2 rounded-md border p-5">
@@ -249,6 +246,7 @@
 		<p class="text-muted-foreground">Fill in the required fields to generate the certificate.</p>
 	</div>
 </section>
+
 <section class="container mx-auto min-h-screen max-w-7xl p-6">
 	{#if errorMsg}
 		<div class="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
@@ -274,7 +272,6 @@
 							type="text"
 							inputmode="numeric"
 							pattern="[0-9]*"
-							max="12"
 							bind:value={lrn}
 							placeholder="123456789012"
 						/>
@@ -298,7 +295,6 @@
 							required
 						/>
 					</div>
-
 					<div class="space-y-2">
 						<Label for="GradeSection">Grade & Section <span class="text-red-500">*</span></Label>
 						<Input
@@ -309,7 +305,6 @@
 							required
 						/>
 					</div>
-
 					<div class="space-y-2">
 						<Label for="SchoolYear">School Year <span class="text-red-500">*</span></Label>
 						<Input
@@ -385,17 +380,17 @@
 							<Button
 								class="flex-1 gap-2"
 								onclick={handleDownload}
-								disabled={!isFormValid || generating}
+								disabled={!isFormValid || generating || !librariesLoaded}
 								size="lg"
 							>
 								<Download class="h-4 w-4" />
-								{generating ? 'Generating PDF...' : 'Download Certificate'}
+								{generating ? 'Generating PDF…' : 'Download Certificate'}
 							</Button>
 							<Button
 								variant="outline"
 								class="gap-2"
 								onclick={handlePrint}
-								disabled={!isFormValid || generating}
+								disabled={!isFormValid || generating || !librariesLoaded}
 								size="lg"
 							>
 								<Printer class="h-4 w-4" />
@@ -407,6 +402,9 @@
 								Fill in all required fields (*) to enable download/print
 							</p>
 						{/if}
+						{#if !librariesLoaded}
+							<p class="text-center text-xs text-amber-600">Loading PDF library…</p>
+						{/if}
 					</div>
 				</CardContent>
 			</Card>
@@ -417,43 +415,184 @@
 				<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
 					<div>
 						<CardTitle class="text-lg">Live Preview</CardTitle>
-						<CardDescription>
-							{pdfUrl ? 'Exact PDF output' : 'Fill all required fields to see preview'}
-						</CardDescription>
+						<CardDescription>Mirrors the generated PDF output</CardDescription>
 					</div>
 					<Badge variant={isFormValid ? 'default' : 'secondary'} class="hidden sm:inline-flex">
 						{isFormValid ? 'Ready' : 'Incomplete'}
 					</Badge>
 				</CardHeader>
 				<CardContent>
-					<div class="relative overflow-hidden rounded-lg border bg-white shadow-sm">
-						<div
-							class="relative mx-auto w-full"
-							style="aspect-ratio: 595.28/841.89; max-height: 80vh;"
-						>
-							{#if pdfUrl}
-								<iframe
-									src="{pdfUrl}#toolbar=0&navpanes=0&scrollbar=0"
-									class="absolute inset-0 h-full w-full"
-									title="Certificate Preview"
-								></iframe>
-							{:else}
-								<iframe
-									src="/Certificate_Of_Enrollment.pdf#toolbar=0&navpanes=0&scrollbar=0"
-									class="absolute inset-0 h-full w-full opacity-30 grayscale"
-									title="Certificate Template"
-								></iframe>
-								<div class="absolute inset-0 flex items-center justify-center">
-									<div class="space-y-2 text-center">
-										<div
-											class="mx-auto h-12 w-12 rounded-full border-2 border-dashed border-muted-foreground/30"
-										></div>
-										<p class="text-sm font-medium text-muted-foreground">
-											Fill all required fields to preview
+					<div
+						bind:this={previewWrapper}
+						class="w-full overflow-hidden rounded-lg border bg-white shadow-sm"
+					>
+						<div style="height: {790 * scale}px; position: relative;">
+							<div
+								style="transform: scale({scale}); transform-origin: top left; width: 595px; position: absolute; top: 0; left: 0;"
+							>
+								<div
+									id="cert-preview-content"
+									class="relative overflow-hidden bg-white text-black"
+									style="width:595px;height:790px;font-family:'Times New Roman',Times,serif;box-sizing:border-box;"
+								>
+									<div class=" px-[48px] pt-[18px] pb-0 text-center">
+										<img
+											src={DepedSeal}
+											alt="DepEd Seal"
+											class="mx-auto mb-1 block size-15 object-contain"
+											onerror={hideOnError}
+										/>
+										<p class="m-0 leading-[1.3] font-bold" style="font-size:9.5pt;">
+											Republic of the Philippines
+										</p>
+										<p class="m-0 leading-[1.2] font-bold" style="font-size:15pt;">
+											Department of Education
+										</p>
+										<p class="m-0 leading-[1.3] font-bold" style="font-size:9pt;">
+											National Capital Region
+										</p>
+										<p class="m-0 leading-[1.3] font-bold" style="font-size:9pt;">
+											Schools Division of Pasig City
+										</p>
+										<p class="m-0 leading-[1.3] font-bold" style="font-size:9pt;">
+											RIZAL HIGH SCHOOL
+										</p>
+										<p class="m-0 leading-[1.3] font-bold" style="font-size:9pt;">
+											CANIOGAN, PASIG CITY
 										</p>
 									</div>
+
+									<div
+										class="mx-[48px] mt-px mb-[10px] justify-center border-t border-black py-4 text-center"
+									>
+										<p class="m-0 font-bold" style="font-size:14pt;letter-spacing:1px;">
+											<span style="border-bottom:1.5px solid #000000;padding-bottom:1px;">
+												CERTIFICATE OF ENROLLMENT
+											</span>
+										</p>
+									</div>
+
+									<div class="mx-[54px]" style="font-size:11pt;line-height:1.5;">
+										<p class="mt-0 mb-[14px] text-justify" style="text-indent:36px;">
+											This is to certify that the learner with the information listed below is
+											officially enrolled at Rizal High School.
+										</p>
+
+										<table class="mb-[8px] w-full border-collapse">
+											<tbody>
+												<tr>
+													<td
+														class="w-[1%] pr-[6px] pb-px align-bottom font-bold whitespace-nowrap"
+													>
+														LRN &amp; NAME:
+													</td>
+													<td class="border-b border-black pb-px align-bottom">
+														{getLrnNameText()}
+													</td>
+												</tr>
+											</tbody>
+										</table>
+
+										<table class="mb-[8px] w-full border-collapse">
+											<tbody>
+												<tr>
+													<td
+														class="w-[1%] pr-[6px] pb-px align-bottom font-bold whitespace-nowrap"
+													>
+														GRADE &amp; SECTION:
+													</td>
+													<td class="pb-px align-bottom">
+														<span class="underline">{gradeSection || ''}</span>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+
+										<table class="mb-[12px] w-full border-collapse">
+											<tbody>
+												<tr>
+													<td
+														class="w-[1%] pr-[6px] pb-px align-bottom font-bold whitespace-nowrap"
+													>
+														SCHOOL YEAR:
+													</td>
+													<td class="pb-px align-bottom">
+														<span class="underline">{schoolYear || ''}</span>
+													</td>
+												</tr>
+											</tbody>
+										</table>
+
+										<p class="m-0 text-justify" style="text-indent:36px;">
+											Issued this
+											<span class="underline"
+												>{certDate.day || ''}<sup style="font-size:7pt;text-decoration:underline ;"
+													>{certDate.suffix || ''}</sup
+												>
+												day of {certDate.month || ''}, {certDate.year || ''}</span
+											>
+											at Dr. Sixto Antonio Avenue, Caniogan, Pasig City, Metro Manila, Philippines.
+										</p>
+									</div>
+
+									<div class="absolute right-[54px] text-center" style="bottom:180px;width:210px;">
+										<img
+											src={principalSignature}
+											alt="Signature"
+											class="mx-auto mb-0 block"
+											style="height:95px;width:80px;"
+											onerror={hideOnError}
+										/>
+										<p class="-mt-9 font-bold" style="font-size:10.5pt;">RICHARD T. SANTOS</p>
+										<p class="m-0 font-bold" style="font-size:10.5pt;">Principal IV</p>
+									</div>
+
+									<div
+										class="absolute right-0 left-0 flex items-center justify-center px-[32px] pb-[10px]"
+										style="bottom:20px;"
+									>
+										<div
+											class="mt-[6px] flex w-[490px] items-center gap-[10px] border-t border-black"
+										>
+											<img
+												src={depEdLogo}
+												alt="DepEd"
+												class="size-13 shrink-0 object-contain"
+												onerror={hideOnError}
+											/>
+											<img
+												src={bagongPilipinas}
+												alt="Bagong Pilipinas"
+												class="size-13 shrink-0 object-contain"
+												onerror={hideOnError}
+											/>
+											<img
+												src={rizalLogo}
+												alt="School Seal"
+												class="size-13 shrink-0 object-contain"
+												onerror={hideOnError}
+											/>
+											<div
+												class="ml-[8px]"
+												style="font-family:'Times New Roman',Times,serif;font-size:9pt;line-height:1.6;"
+											>
+												<p class="m-0 font-bold">
+													Address: Dr. Sixto Ant. Ave., Caniogan, Pasig City
+												</p>
+												<p class="m-0 font-bold">Tel: 8696-1251</p>
+												<p class="m-0 font-bold">
+													Email: <span class="font-bold underline" style="color:#1a1aaa;"
+														>305413@deped.gov.ph</span
+													>
+												</p>
+												<p class="m-0 font-bold italic">
+													"Strive for Excellence for the Glory of God"
+												</p>
+											</div>
+										</div>
+									</div>
 								</div>
-							{/if}
+							</div>
 						</div>
 					</div>
 				</CardContent>

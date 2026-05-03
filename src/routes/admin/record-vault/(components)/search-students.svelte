@@ -1,10 +1,11 @@
 <script lang="ts">
 	import Input from '$lib/components/ui/input/input.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
+	import BackButton from '@lucide/svelte/icons/arrow-left';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
-
+	import SearchIcon from '@lucide/svelte/icons/search';
 	let searchTerm = $state('');
 
 	const handleSearch = async () => {
@@ -30,13 +31,24 @@
 	};
 </script>
 
-<div class="flex flex-wrap items-center gap-2">
+<div class="flex w-lg items-center gap-2">
 	{#if page.url.searchParams.get('search')}
-		<Button onclick={handleBack}>Back to results</Button>
+		<Button onclick={handleBack} class="cursor-pointer bg-green-600 hover:bg-green-700"
+			><BackButton />Back</Button
+		>
 	{/if}
-	<div class="grid grid-cols-[1fr_auto] items-center gap-2">
-		<Input type="text" bind:value={searchTerm} placeholder="Search by fullname" />
+	<div class="g flex w-full items-center">
+		<Input
+			type="text"
+			bind:value={searchTerm}
+			class="rounded-r-none "
+			placeholder="Search by LRN or Full Name"
+		/>
 
-		<Button onclick={handleSearch}>Search</Button>
+		<Button
+			onclick={handleSearch}
+			class="cursor-pointer rounded-l-none border border-gray-200 bg-gray-200 text-muted-foreground "
+			><SearchIcon class="size-5" /></Button
+		>
 	</div>
 </div>

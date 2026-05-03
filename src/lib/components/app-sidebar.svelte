@@ -4,7 +4,7 @@
 	import FileOutput from '@lucide/svelte/icons/file-output';
 	import RecordsVault from '@lucide/svelte/icons/archive';
 	import ArchiveRestore from '@lucide/svelte/icons/archive-restore';
-	import RizalIcons from '$lib/images/rizal_Icon.jpg';
+	import RizalIcons from '$lib/images/rizalLogo.png';
 	import Logout from '@lucide/svelte/icons/log-out';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 	import { page } from '$app/state';
