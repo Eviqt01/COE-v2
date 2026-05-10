@@ -56,7 +56,7 @@ export const actions: Actions = {
 		return { credentialForm, msg: 'Account created successfully' };
 	},
 
-	forgotpasswordEvent: async ({ request, locals }) => {
+	forgotpasswordEvent: async ({ request, locals, url }) => {
 		const credentialForm = await superValidate(request, zod4(forgotpasswordSchema));
 
 		if (!credentialForm.valid) {
@@ -64,7 +64,7 @@ export const actions: Actions = {
 		}
 
 		const { error } = await locals.supabase.auth.resetPasswordForEmail(credentialForm.data.email, {
-			redirectTo: 'http://localhost:5173/login?q=reset-password'
+			redirectTo: `${url.origin}/auth/callback?next=/login?q=reset-password`
 		});
 		if (error) {
 			return fail(401, { credentialForm, msg: error.message });
@@ -73,30 +73,58 @@ export const actions: Actions = {
 	},
 
 	resetPasswordEvent: async ({ request, locals }) => {
+		const fs = await import('fs');
+		const logFile = 'reset_debug.log';
+		const log = (msg: string) =>
+			fs.appendFileSync(logFile, new Date().toISOString() + ': ' + msg + '\n');
+
+		log('--- Starting resetPasswordEvent ---');
+
 		const credentialForm = await superValidate(request, zod4(resetPasswordSchema));
 
 		if (!credentialForm.valid) {
-			return fail(400, { credentialForm, msg: 'error' });
+			log('Form invalid: ' + JSON.stringify(credentialForm.errors));
+			return fail(400, { credentialForm, msg: 'Please check your passwords.' });
 		}
 
+		log('Form valid. New password length: ' + credentialForm.data.newPassword.length);
+
 		const {
-			data: { user }
+			data: { user },
+			error: userError
 		} = await locals.supabase.auth.getUser();
 
-		if (!user) {
+		if (userError || !user) {
+			log('User verification failed: ' + JSON.stringify(userError));
+			console.error('User verification failed:', userError);
 			return fail(401, {
 				credentialForm,
-				msg: 'Reset session expired. Request a new reset email.'
+				msg: 'Session expired or invalid. Please request a new reset link.'
 			});
 		}
 
-		const { error } = await locals.supabase.auth.updateUser({
-			password: credentialForm.data.newPassword
+		log('User verified. ID: ' + user.id + ', Email: ' + user.email);
+		console.log('Attempting password update for user:', user.id);
+
+		log('Calling updateUser...');
+		const { data, error: updateError } = await locals.supabase.auth.updateUser({
+			password: credentialForm.data.newPassword,
+			data: { password_reset_at: new Date().toISOString() }
 		});
 
-		if (error) {
-			return fail(401, { credentialForm, msg: error.message });
+		if (updateError) {
+			log('Update error: ' + JSON.stringify(updateError));
+			console.error('Password update failed:', updateError);
+			return fail(401, { credentialForm, msg: updateError.message });
 		}
-		return { credentialForm, msg: 'Password updated succesfully.' };
+
+		log('Update success! Returned user ID: ' + data.user?.id);
+		console.log('Password updated successfully for user:', data.user?.id);
+
+		log('--- Ending resetPasswordEvent ---');
+		return {
+			credentialForm,
+			msg: 'Password updated successfully. You can now log in with your new password.'
+		};
 	}
 };

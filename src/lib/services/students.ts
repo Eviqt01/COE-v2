@@ -51,7 +51,7 @@ export class StudentsServiceTB {
 			.from('students')
 			.select('*')
 			.order('full_name', { ascending: true })
-			.or(`full_name.ilike.%${searchTerm}%,lrn.ilike.%${searchTerm}`);
+			.or(`full_name.ilike."%${searchTerm}%",lrn.ilike."%${searchTerm}%"`);
 		if (error) return { data: null, error: error.message };
 
 		return { data: data as Students[], error: null };
@@ -64,6 +64,26 @@ export class StudentsServiceTB {
 			p_id: id,
 			p_lrn: lrn
 		});
+
+		if (error) return { error: error.message };
+
+		return { error: null };
+	}
+
+	async getStudentById(id: string) {
+		if (!this.supabase) return { data: null, error: 'Supabase client not initialized' };
+
+		const { data, error } = await this.supabase.from('students').select('*').eq('id', id).single();
+
+		if (error) return { data: null, error: error.message };
+
+		return { data: data as Students, error: null };
+	}
+
+	async bulkInsertStudents(students: Omit<Students, 'id' | 'created_at'>[]) {
+		if (!this.supabase) return { error: 'Supabase client not initialized' };
+
+		const { error } = await this.supabase.from('students').insert(students);
 
 		if (error) return { error: error.message };
 

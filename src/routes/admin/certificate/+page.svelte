@@ -24,6 +24,11 @@
 	import { parseDate } from 'chrono-node';
 	import { CalendarDate, getLocalTimeZone, type DateValue } from '@internationalized/date';
 	import { untrack, onMount } from 'svelte';
+	import { page } from '$app/state';
+	import { StudentsServiceTB } from '$lib/services/students';
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
+	import { toast } from 'svelte-sonner';
 
 	const getOrdinalSuffix = (n: number): string => {
 		const mod100 = n % 100;
@@ -72,13 +77,16 @@
 		})
 	);
 
-	let lrn = $state('');
-	let fullName = $state('');
-	let gradeSection = $state('');
-	let schoolYear = $state('');
+	let lrn = $state(page.url.searchParams.get('lrn') ?? '');
+	let fullName = $state(page.url.searchParams.get('fullName') ?? '');
+	let gradeSection = $state(page.url.searchParams.get('gradeSection') ?? '');
+	let schoolYear = $state(page.url.searchParams.get('schoolYear') ?? '');
+	let studentId = $state(page.url.searchParams.get('id') ?? '');
 	let generating = $state(false);
 	let errorMsg = $state('');
 	let librariesLoaded = $state(false);
+
+	const studentServiceFAC = new StudentsServiceTB(page.data.supabase);
 
 	const certDate = $derived(formatCertDate(value));
 	const isFormValid = $derived(
@@ -194,6 +202,28 @@
 			a.href = url;
 			a.download = `Certificate_of_Enrollment_${lrn || fullName.replace(/\s+/g, '_')}.pdf`;
 			a.click();
+
+			if (studentId) {
+				const { data: student } = await studentServiceFAC.getStudentById(studentId);
+				if (student) {
+					const { error } = (await page.data.supabase?.from('dashboard').upsert({
+						...student,
+						lrn: lrn,
+						full_name: fullName,
+						grade_section: gradeSection,
+						school_year: schoolYear,
+						created_at: new Date().toISOString()
+					})) ?? { error: new Error('Supabase client not initialized') };
+
+					if (!error) {
+						toast.success('Certificate downloaded and copied to dashboard.');
+						goto(resolve('/admin'));
+					} else {
+						console.error('Failed to copy to dashboard:', error);
+					}
+				}
+			}
+
 			setTimeout(() => URL.revokeObjectURL(url), 60_000);
 		} catch (err: unknown) {
 			errorMsg = err instanceof Error ? err.message : 'Failed to generate PDF';
@@ -214,6 +244,28 @@
 			const url = URL.createObjectURL(blob);
 			const win = window.open(url, '_blank');
 			if (win) win.addEventListener('load', () => win.print());
+
+			if (studentId) {
+				const { data: student } = await studentServiceFAC.getStudentById(studentId);
+				if (student) {
+					const { error } = (await page.data.supabase?.from('dashboard').upsert({
+						...student,
+						lrn: lrn,
+						full_name: fullName,
+						grade_section: gradeSection,
+						school_year: schoolYear,
+						created_at: new Date().toISOString()
+					})) ?? { error: new Error('Supabase client not initialized') };
+
+					if (!error) {
+						toast.success('Certificate issued and copied to dashboard.');
+						goto(resolve('/admin'));
+					} else {
+						console.error('Failed to copy to dashboard:', error);
+					}
+				}
+			}
+
 			setTimeout(() => URL.revokeObjectURL(url), 60_000);
 		} catch (err: unknown) {
 			errorMsg = err instanceof Error ? err.message : 'Failed to generate PDF';
@@ -526,7 +578,7 @@
 										<p class="m-0 text-justify" style="text-indent:36px;">
 											Issued this
 											<span class="underline"
-												>{certDate.day || ''}<sup style="font-size:7pt;text-decoration:underline ;"
+												>{certDate.day || ''}<sup style="font-size:7pt;text-decoration: underline ;"
 													>{certDate.suffix || ''}</sup
 												>
 												day of {certDate.month || ''}, {certDate.year || ''}</span

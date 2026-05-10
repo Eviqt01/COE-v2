@@ -33,24 +33,24 @@ export class StudentsArchiveServiceTB {
 	}
 
 	async getStudentsCountArchive() {
-		if (!this.supabase) return { data: null, error: 'Supabase client not initialized' };
-		const { data, error } = await this.supabase
+		if (!this.supabase) return { count: null, error: 'Supabase client not initialized' };
+		const { count, error } = await this.supabase
 			.from('students_archive')
 			.select('id', { count: 'exact' });
 
-		if (error) return { data: null, error: error.message };
+		if (error) return { count: null, error: error.message };
 
-		return { data: data as StudentsArchive[], error: null };
+		return { count, error: null };
 	}
 
-	async searchStudentsArchive({ SearchTerm }: { SearchTerm: string }) {
-		if (!this.supabase) return { data: null, error: 'Supbase client not initalized' };
+	async searchStudentsArchive({ searchTerm }: { searchTerm: string }) {
+		if (!this.supabase) return { data: null, error: 'Supabase client not initialized' };
 
 		const { data, error } = await this.supabase
 			.from('students_archive')
 			.select('*')
 			.order('full_name', { ascending: true })
-			.or(`full_name.ilike%${SearchTerm}%,lrn.ilike%${SearchTerm}`);
+			.or(`full_name.ilike."%${searchTerm}%",lrn.ilike."%${searchTerm}%"`);
 
 		if (error) return { data: null, error: error.message };
 
@@ -64,6 +64,29 @@ export class StudentsArchiveServiceTB {
 			p_id: id,
 			p_lrn: lrn
 		});
+
+		if (error) return { error: error.message };
+
+		return { error: null };
+	}
+
+	async restoreStudent({ id, lrn }: { id: string; lrn: string }) {
+		if (!this.supabase) return { error: 'Supabase client not initialized' };
+
+		const { error } = await this.supabase.rpc('restore_student', {
+			p_id: id,
+			p_lrn: lrn
+		});
+
+		if (error) return { error: error.message };
+
+		return { error: null };
+	}
+
+	async deleteArchiveStudent(id: string) {
+		if (!this.supabase) return { error: 'Supabase client not initialized' };
+
+		const { error } = await this.supabase.from('students_archive').delete().eq('id', id);
 
 		if (error) return { error: error.message };
 

@@ -2,21 +2,33 @@
 	import * as Table from '$lib/components/ui/table/index';
 	import Paginator from '$lib/components/paginator.svelte';
 	import Offsetter from '$lib/components/offsetter.svelte';
-	import SearchStudents from './(components)/search-students.svelte';
-	import Actions from './(components)/actions.svelte';
+	import SearchStudents from './(components)/(search-students)/search-students.svelte';
+	import Actions from './(components)/(actions)/actions.svelte';
+	import ImportData from './(components)/(import-data)/import-data.svelte';
 	import { page } from '$app/state';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 
 	const { data } = $props();
 
-	const tableHead = ['LRN', 'Full Name', 'Grade & Section', 'School Year', 'Action'];
+	const tableHead = [
+		'LRN',
+		'Full Name',
+		'Gender',
+		'Grade & Section',
+		'School Year',
+		'Adviser',
+		'Action'
+	];
 </script>
 
 <section class="flex flex-col gap-5">
-	<div class="rounded-md border p-5">
-		<h1 class="text-3xl font-bold">Records Vault</h1>
-		<p class="text-muted-foreground">Manage your Certificate</p>
+	<div class="flex items-center justify-center rounded-md border p-5">
+		<div class="mr-auto">
+			<h1 class="text-3xl font-bold">Records Vault</h1>
+			<p class="text-muted-foreground">Manage your Certificate</p>
+		</div>
+		<ImportData />
 	</div>
 	<div class="flex items-center justify-center gap-2">
 		<div>
@@ -54,16 +66,18 @@
 				<Table.Row>
 					<Table.Cell class="text-center font-medium">{student.lrn}</Table.Cell>
 					<Table.Cell class="text-center">{student.full_name}</Table.Cell>
+					<Table.Cell class="text-center">{student.gender}</Table.Cell>
 					<Table.Cell class="text-center">{student.grade_section}</Table.Cell>
 					<Table.Cell class="text-center">{student.school_year}</Table.Cell>
+					<Table.Cell class="text-center">{student.adviser}</Table.Cell>
 					<Table.Cell class="text-center">
 						<Actions {student} />
 					</Table.Cell>
 				</Table.Row>
 			{:else}
 				<Table.Row>
-					<Table.Cell colspan={5} class="text-center text-muted-foreground text-xl"
-						>No Student Found</Table.Cell
+					<Table.Cell colspan={7} class="text-center text-muted-foreground text-lg"
+						>No Student Record Found</Table.Cell
 					>
 				</Table.Row>
 			{/each}

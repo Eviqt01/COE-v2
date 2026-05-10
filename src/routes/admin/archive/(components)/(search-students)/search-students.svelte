@@ -45,9 +45,7 @@
 			placeholder="Search by LRN or Full Name"
 		/>
 
-		<Button
-			onclick={handleSearch}
-			class="cursor-pointer rounded-l-none border border-gray-200 bg-gray-200 text-muted-foreground "
+		<Button onclick={handleSearch} variant="outline" class="cursor-pointer rounded-l-none   "
 			><SearchIcon class="size-5" /></Button
 		>
 	</div>

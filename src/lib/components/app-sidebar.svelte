@@ -5,27 +5,8 @@
 	import RecordsVault from '@lucide/svelte/icons/archive';
 	import ArchiveRestore from '@lucide/svelte/icons/archive-restore';
 	import RizalIcons from '$lib/images/rizalLogo.png';
-	import Logout from '@lucide/svelte/icons/log-out';
+
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
-	import { page } from '$app/state';
-	import { toast } from 'svelte-sonner';
-	import { invalidateAll } from '$app/navigation';
-	import Button from './ui/button/button.svelte';
-
-	const handleLogout = async () => {
-		if (!page.data.supabase) {
-			return;
-		}
-
-		const { error } = await page.data.supabase.auth.signOut();
-
-		if (error) {
-			toast.error(error.message);
-			return;
-		}
-
-		invalidateAll();
-	};
 
 	const items = [
 		{ title: 'Dashboard', path: '/admin', icon: DashboardIcon },
@@ -67,11 +48,4 @@
 			</Sidebar.GroupContent>
 		</Sidebar.Group>
 	</Sidebar.Content>
-	<div class="mb-4 flex flex-col gap-2">
-		<Button
-			onclick={handleLogout}
-			class="cursor-pointer border-0 bg-transparent text-black hover:bg-gray-200"
-			>Logout<Logout /></Button
-		>
-	</div>
 </Sidebar.Root>

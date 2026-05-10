@@ -50,12 +50,19 @@ export const handle: Handle = async ({ event, resolve }) => {
 		return { session, user };
 	};
 
-	const { user } = await event.locals.safeGetSession();
+	const { user, session } = await event.locals.safeGetSession();
+	event.locals.user = user;
+	event.locals.session = session;
+
 	const path = event.url.pathname;
 
 	if (!user && path.startsWith('/admin')) redirect(302, '/login');
-	if (user && path === '/login') redirect(302, '/admin');
+	if (user && path === '/login' && event.url.searchParams.get('q') !== 'reset-password')
+		redirect(302, '/admin');
 
+	if (!user && path === '/login' && event.url.searchParams.get('q') === 'reset-password') {
+		redirect(302, '/login');
+	}
 	return resolve(event, {
 		filterSerializedResponseHeaders(name) {
 			return name === 'content-range' || name === 'x-supabase-api-version';

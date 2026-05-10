@@ -1,9 +1,18 @@
 <script lang="ts">
-	import { resolve } from '$app/paths';
-	import type { Pathname } from '$app/types';
+	import NavBar from './(nav-bar)/nav-bar.svelte';
+	import Hero from './(nav-bar)/(components)/hero.svelte';
+	import Contact from './(nav-bar)/(components)/(contact)/contact.svelte';
+	import Help from './(nav-bar)/(components)/(help)/help.svelte';
 </script>
 
-<section>
-	<h1>This is my Project</h1>
-	<a href={resolve('/login' as Pathname)}>Click ME to Login</a>
-</section>
+<NavBar>
+	<section class="scroll-smooth">
+		<Hero></Hero>
+		<section id="contact">
+			<Contact></Contact>
+		</section>
+		<section id="help">
+			<Help></Help>
+		</section>
+	</section>
+</NavBar>

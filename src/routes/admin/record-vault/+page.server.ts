@@ -9,7 +9,7 @@ export const load: PageServerLoad = async ({ locals, url }) => {
 	const searchTerm = url.searchParams.get('search');
 
 	if (searchTerm) {
-		const { data } = await studentServiceTb.searchFullname({ searchTerm: searchTerm });
+		const { data } = await studentServiceTb.searchStudents({ searchTerm: searchTerm });
 
 		return {
 			students: data,
