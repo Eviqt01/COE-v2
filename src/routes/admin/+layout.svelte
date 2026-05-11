@@ -8,7 +8,6 @@
 	import Logout from '@lucide/svelte/icons/log-out';
 	import DarkMode from './(dark-mode)/dark-mode.svelte';
 	import { ModeWatcher } from 'mode-watcher';
-	import { fly, fade } from 'svelte/transition';
 
 	let { children } = $props();
 	const handleLogout = async () => {
@@ -40,19 +39,12 @@
 				onclick={handleLogout}
 				variant="destructive"
 				class="cursor-pointer border-0 hover:bg-gray-200"
+				>Logout<Logout /></Button
 			>
-				Logout
-				<Logout />
-			</Button>
 		</div>
-		<div class="w-full p-2 overflow-x-hidden">
+		<div class="w-full p-2">
 			<ModeWatcher />
-			{#key page.url.pathname}
-				<div in:fly={{ x: 20, duration: 400, delay: 200 }} out:fade={{ duration: 200 }}>
-					{@render children()}
-				</div>
-			{/key}
+			{@render children()}
 		</div>
 	</section>
 </Sidebar.Provider>
-

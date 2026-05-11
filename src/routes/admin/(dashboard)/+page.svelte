@@ -8,7 +8,6 @@
 	import { resolve } from '$app/paths';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import PlusIcon from '@lucide/svelte/icons/plus';
-	import { fly, fade } from 'svelte/transition';
 
 	const { data } = $props();
 
@@ -18,27 +17,21 @@
 </script>
 
 <section class="flex flex-col gap-5">
-	<div 
-		class="flex items-center justify-center rounded-xl border bg-card p-6 shadow-sm transition-all hover:shadow-md"
-		in:fly={{ y: 20, duration: 600 }}
-	>
+	<div class="flex items-center justify-center rounded-md border p-5">
 		<div class="mr-auto">
-			<h1 class="text-3xl font-bold tracking-tight">
-				Welcome, <span class="text-primary">{data.user?.user_metadata.nickname}</span>!
+			<h1 class="text-3xl font-bold">
+				Welcome, {data.user?.user_metadata.nickname}!
 			</h1>
-			<p class="text-muted-foreground">Manage and issue student certificates from one place.</p>
+			<p class="text-muted-foreground">Manage your Issued Certificates</p>
 		</div>
-		<Button onclick={gotoCertificate} variant="default" class="cursor-pointer shadow-lg active:scale-95 transition-all">
+		<Button onclick={gotoCertificate} variant="outline" class="cursor-pointer">
 			<PlusIcon class="mr-2 size-4" />
 			Create Certificate
 		</Button>
 	</div>
 
-	<div 
-		class="flex items-center justify-center gap-2"
-		in:fly={{ y: 20, duration: 600, delay: 200 }}
-	>
-		<div class="flex-1 max-w-md">
+	<div class="flex items-center justify-center gap-2">
+		<div>
 			<SearchDashboard />
 		</div>
 		<div class="ml-auto">
@@ -55,23 +48,19 @@
 		</div>
 	</div>
 
-	<div in:fade={{ duration: 800, delay: 400 }}>
-		<TableData />
-	</div>
+	<TableData />
 
 	{#if !data.searchTerm}
-		<div in:fade={{ duration: 600, delay: 600 }}>
-			<Paginator
-				initialPage={data.what_page}
-				totalCount={data.count ?? 0}
-				onPageChange={async (p) => {
-					const url = new URL(page.url);
-					url.searchParams.set('p', String(p));
-					const path = url.toString().replace(page.url.origin, '') as '/admin';
-					await goto(resolve(path), { noScroll: true, replaceState: true });
-				}}
-			/>
-		</div>
+		<Paginator
+			initialPage={data.what_page}
+			totalCount={data.count ?? 0}
+			onPageChange={async (p) => {
+				const url = new URL(page.url);
+				url.searchParams.set('p', String(p));
+				const path = url.toString().replace(page.url.origin, '') as '/admin';
+				await goto(resolve(path), { noScroll: true, replaceState: true });
+			}}
+		/>
 	{/if}
 </section>
 
