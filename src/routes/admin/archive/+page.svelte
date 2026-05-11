@@ -63,7 +63,7 @@
 			{:else}
 				<Table.Row>
 					<Table.Cell colspan={5} class="text-center text-muted-foreground text-lg"
-						>No Student Record Found</Table.Cell
+						>No Students Records Found</Table.Cell
 					>
 				</Table.Row>
 			{/each}

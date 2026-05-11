@@ -1,34 +1,48 @@
 <script lang="ts">
 	import School from '@lucide/svelte/icons/school';
+	import rizalSchool from '$lib/images/school.png';
 	import type { Snippet } from 'svelte';
+	import { fly } from 'svelte/transition';
 
 	let { children }: { children?: Snippet } = $props();
 </script>
 
 <section id="home" class="relative flex min-h-[90vh] items-center justify-center overflow-hidden">
 	<div class="absolute inset-0 z-0">
-		<img
-			src="/Users/mikejohneviota/.gemini/antigravity/brain/47026d2f-102d-4887-9c1f-115dca60d2ba/school_hero_background_1778447865372.png"
-			alt="School Hero"
-			class="h-full w-full object-cover"
-		/>
-		<div class="absolute inset-0 bg-linear-to-r from-black/80 via-black/50 to-transparent"></div>
+		<img src={rizalSchool} alt="School Hero" class="h-full w-full object-cover" />
+		<div class="absolute inset-0 bg-linear-to-r from-black/80 via-black/40 to-transparent"></div>
 	</div>
 
 	<div class="relative z-10 container mx-auto px-6">
-		<div class="max-w-2xl text-white">
+		<div class="max-w-3xl text-white">
 			<div
-				class="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/20 px-4 py-1.5 text-sm font-medium backdrop-blur-sm"
+				class="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/20 px-4 py-1.5 text-sm font-semibold text-primary-foreground ring-1 ring-white/20 backdrop-blur-md"
+				in:fly={{ y: -20, duration: 800, delay: 200 }}
 			>
-				<School class="size-4 text-primary" />
-				<span>Excellence in Education Since 1902</span>
+				<School class="size-4 text-accent" />
+				<span class="text-[10px] tracking-wide uppercase sm:text-xs"
+					>Excellence in Education Since 1902</span
+				>
 			</div>
 
-			<h1 class="mb-6 text-5xl font-extrabold tracking-tight md:text-7xl">
-				Welcome to <span class="text-primary">Rizal High</span> School
+			<h1
+				class="mb-6 text-5xl font-black tracking-tight drop-shadow-2xl md:text-8xl"
+				in:fly={{ x: -30, duration: 800, delay: 400 }}
+			>
+				<span
+					class="mb-2 block font-sans text-3xl font-light tracking-[0.2em] text-gray-300 uppercase md:text-4xl"
+					>Welcome to</span
+				>
+				<span class="font-serif text-accent italic drop-shadow-[0_2px_2px_rgba(0,0,0,0.5)]"
+					>Rizal High</span
+				>
+				<span class="font-serif">School</span>
 			</h1>
 
-			<p class="mb-10 text-lg leading-relaxed text-gray-200 md:text-xl">
+			<p
+				class="mb-10 max-w-xl text-lg leading-relaxed font-medium text-gray-200 drop-shadow-lg md:text-xl"
+				in:fly={{ y: 20, duration: 800, delay: 600 }}
+			>
 				Empowering students through innovative learning, character development, and academic
 				excellence. Join us in shaping the leaders of tomorrow.
 			</p>

@@ -3,6 +3,7 @@
 	import FileText from '@lucide/svelte/icons/file-text';
 	import LayoutDashboard from '@lucide/svelte/icons/layout-dashboard';
 	import Archive from '@lucide/svelte/icons/archive';
+	import Lightbulb from '@lucide/svelte/icons/lightbulb';
 
 	const steps = [
 		{
@@ -51,7 +52,6 @@
 				<div
 					class="relative flex flex-col items-center rounded-3xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl"
 				>
-					<!-- Icon Circle -->
 					<div
 						class="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl {step.color} text-white shadow-lg shadow-{step.color.split(
 							'-'
@@ -65,7 +65,6 @@
 						{step.description}
 					</p>
 
-					<!-- Connector Line (for desktop) -->
 					<div
 						class="absolute top-1/2 -right-4 hidden h-0.5 w-8 bg-muted last:hidden lg:block"
 					></div>
@@ -73,11 +72,14 @@
 			{/each}
 		</div>
 
-		<!-- Pro Tip Card -->
 		<div
-			class="mt-16 rounded-3xl border border-primary/10 bg-primary/5 p-8 text-center backdrop-blur-sm"
+			class="mt-16 flex flex-col items-center justify-center rounded-3xl border border-primary/10 bg-primary/5 p-8 text-center backdrop-blur-sm"
 		>
-			<h4 class="mb-2 font-bold text-primary">💡 Pro Tip</h4>
+			<div class="flex items-center">
+				<Lightbulb class="size-8" />
+				<h4 class="mb-2 font-bold text-primary">Pro Tip</h4>
+			</div>
+
 			<p class="text-sm text-muted-foreground">
 				You can use the <strong>Quick Search</strong> bar in both the Dashboard and Record Vault to find
 				any student by their LRN or Full Name instantly.

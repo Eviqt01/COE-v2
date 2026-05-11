@@ -1,12 +1,15 @@
 <script lang="ts">
 	import * as Form from '$lib/components/ui/form/index';
 	import { Input } from '$lib/components/ui/input/index';
+	import * as Card from '$lib/components/ui/card/index';
+	import { Button } from '$lib/components/ui/button/index';
 	import type { LoginSchema } from '../../schema';
 	import { loginschema } from '../../schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
+	import { Mail, Lock, LogIn, Loader2 } from '@lucide/svelte';
 
 	interface Props {
 		loginForm: SuperValidated<Infer<LoginSchema>>;
@@ -36,55 +39,79 @@
 	const { form: formData, enhance, submitting, delayed } = form;
 </script>
 
-<section class="w-full max-w-sm rounded-lg border p-2">
-	<div class="">
-		<h1 class="text-center text-2xl leading-normal font-medium tracking-wide">Log in</h1>
-		<p class="text-center text-sm text-muted-foreground">Enter your email and password to login.</p>
-	</div>
+<Card.Root
+	class="border-slate-200/60 bg-white/80 shadow-2xl backdrop-blur-xl dark:border-slate-800/60 dark:bg-slate-900/80"
+>
+	<Card.Header class="space-y-1 text-center">
+		<Card.Title class="text-2xl font-bold tracking-tight">Welcome back</Card.Title>
+		<Card.Description>Enter your credentials to access your account</Card.Description>
+	</Card.Header>
+	<Card.Content>
+		<form method="POST" action="?/loginEvent" use:enhance class="grid gap-4">
+			<Form.Field {form} name="email">
+				<Form.Control>
+					{#snippet children({ props })}
+						<Form.Label>Email</Form.Label>
+						<div class="relative">
+							<Mail class="absolute top-3 left-3 size-4 text-muted-foreground" />
+							<Input
+								{...props}
+								bind:value={$formData.email}
+								placeholder="name@example.com"
+								class="bg-white/50 pl-10 dark:bg-slate-950/50"
+							/>
+						</div>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 
-	<form method="POST" action="?/loginEvent" use:enhance class="mt-5 flex flex-col gap-2">
-		<Form.Field {form} name="email">
-			<Form.Control>
-				{#snippet children({ props })}
-					<Form.Label>Email</Form.Label>
-					<Input {...props} bind:value={$formData.email} placeholder="Enter your email" />
-				{/snippet}
-			</Form.Control>
+			<Form.Field {form} name="password">
+				<Form.Control>
+					{#snippet children({ props })}
+						<div class="flex items-center justify-between">
+							<Form.Label>Password</Form.Label>
+							<a
+								href={resolve('/login?q=forgot-password')}
+								class="text-xs font-medium text-primary hover:underline"
+							>
+								Forgot?
+							</a>
+						</div>
+						<div class="relative">
+							<Lock class="absolute top-3 left-3 size-4 text-muted-foreground" />
+							<Input
+								type="password"
+								{...props}
+								bind:value={$formData.password}
+								placeholder="••••••••"
+								class="bg-white/50 pl-10 dark:bg-slate-950/50"
+							/>
+						</div>
+					{/snippet}
+				</Form.Control>
+				<Form.FieldErrors />
+			</Form.Field>
 
-			<Form.FieldErrors />
-		</Form.Field>
-
-		<Form.Field {form} name="password">
-			<Form.Control>
-				{#snippet children({ props })}
-					<Form.Label>Password</Form.Label>
-					<Input
-						type="password"
-						{...props}
-						bind:value={$formData.password}
-						placeholder="Enter your password"
-					/>
-				{/snippet}
-			</Form.Control>
-
-			<Form.FieldErrors />
-		</Form.Field>
-
-		<Form.Button disabled={$submitting || $delayed}>
-			{#if $submitting || $delayed}
-				Please wait...
-			{:else}
-				Login
-			{/if}
-		</Form.Button>
-	</form>
-	<a href={resolve('/login?q=forgot-password')} class="text-xs text-blue-500 hover:underline"
-		>Forgot Password?</a
+			<Button type="submit" class="w-full font-semibold" disabled={$submitting || $delayed}>
+				{#if $submitting || $delayed}
+					<Loader2 class="mr-2 size-4 animate-spin" />
+					Logging in...
+				{:else}
+					<LogIn class="mr-2 size-4" />
+					Login
+				{/if}
+			</Button>
+		</form>
+	</Card.Content>
+	<Card.Footer
+		class="flex flex-col gap-4 border-t border-slate-100 bg-slate-50/50 p-6 text-center dark:border-slate-800 dark:bg-slate-900/50"
 	>
-	<div class="text-center">
-		<p class="text-sm">
+		<p class="text-sm text-muted-foreground">
 			Don't have an account yet?
-			<a href={resolve('/login?q=register')} class="text-blue-500 underline">Register here</a>
+			<a href={resolve('/login?q=register')} class="font-semibold text-primary hover:underline">
+				Register here
+			</a>
 		</p>
-	</div>
-</section>
+	</Card.Footer>
+</Card.Root>
