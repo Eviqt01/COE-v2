@@ -13,11 +13,11 @@
 	} from '$lib/components/ui/card/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import DepedSeal from '$lib/images/depedSeal.png?inline';
-	import principalSignature from '$lib/images/principalSignature.png?inline';
-	import bagongPilipinas from '$lib/images/bagongPilipinas.png?inline';
-	import depEdLogo from '$lib/images/depEdLogo.png?inline';
-	import rizalLogo from '$lib/images/rizalLogo.png?inline';
+	import DepedSeal from '$lib/images/depedSeal.png';
+	import principalSignature from '$lib/images/principalSignature.png';
+	import bagongPilipinas from '$lib/images/bagongPilipinas.png';
+	import depEdLogo from '$lib/images/depEdLogo.png';
+	import rizalLogo from '$lib/images/rizalLogo.png';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
 	import Download from '@lucide/svelte/icons/download';
 	import Printer from '@lucide/svelte/icons/printer';
@@ -171,7 +171,8 @@
 			canvas = await html2canvasFn(wrapper, {
 				scale: 3,
 				useCORS: true,
-				allowTaint: true,
+				allowTaint: false,
+				foreignObjectRendering: false,
 				letterRendering: false,
 				width: 595,
 				height: 790,
@@ -482,162 +483,175 @@
 							<div
 								style="transform: scale({scale}); transform-origin: top left; width: 595px; position: absolute; top: 0; left: 0;"
 							>
+								<!-- ============================================================
+								     CERTIFICATE CONTENT
+								     ALL styles are inline — NO Tailwind classes used here.
+								     This ensures html2canvas renders identically in production.
+								     ============================================================ -->
 								<div
 									id="cert-preview-content"
-									class="relative overflow-hidden bg-white text-black"
-									style="width:595px;height:790px;font-family:'Times New Roman',Times,serif;box-sizing:border-box;"
+									style="position:relative;overflow:hidden;background:#ffffff;color:#000000;width:595px;height:790px;font-family:'Times New Roman',Times,serif;box-sizing:border-box;"
 								>
-									<div class=" px-[48px] pt-[18px] pb-0 text-center">
+									<!-- HEADER -->
+									<div style="padding:18px 48px 0 48px;text-align:center;">
 										<img
 											src={DepedSeal}
 											alt="DepEd Seal"
-											class="mx-auto mb-1 block size-15 object-contain"
+											style="display:block;margin:0 auto 4px auto;width:60px;height:60px;object-fit:contain;"
 											onerror={hideOnError}
 										/>
-										<p class="m-0 leading-[1.3] font-bold" style="font-size:9.5pt;">
+										<p style="margin:0;line-height:1.3;font-weight:bold;font-size:9.5pt;">
 											Republic of the Philippines
 										</p>
-										<p class="m-0 leading-[1.2] font-bold" style="font-size:15pt;">
+										<p style="margin:0;line-height:1.2;font-weight:bold;font-size:15pt;">
 											Department of Education
 										</p>
-										<p class="m-0 leading-[1.3] font-bold" style="font-size:9pt;">
+										<p style="margin:0;line-height:1.3;font-weight:bold;font-size:9pt;">
 											National Capital Region
 										</p>
-										<p class="m-0 leading-[1.3] font-bold" style="font-size:9pt;">
+										<p style="margin:0;line-height:1.3;font-weight:bold;font-size:9pt;">
 											Schools Division of Pasig City
 										</p>
-										<p class="m-0 leading-[1.3] font-bold" style="font-size:9pt;">
+										<p style="margin:0;line-height:1.3;font-weight:bold;font-size:9pt;">
 											RIZAL HIGH SCHOOL
 										</p>
-										<p class="m-0 leading-[1.3] font-bold" style="font-size:9pt;">
+										<p style="margin:0;line-height:1.3;font-weight:bold;font-size:9pt;">
 											CANIOGAN, PASIG CITY
 										</p>
 									</div>
 
+									<!-- TITLE -->
 									<div
-										class="mx-[48px] mt-px mb-[10px] justify-center border-t border-black py-4 text-center"
+										style="margin:4px 48px 10px 48px;border-top:1px solid #000000;padding:16px 0;text-align:center;"
 									>
-										<p class="m-0 font-bold" style="font-size:14pt;letter-spacing:1px;">
+										<p style="margin:0;font-weight:bold;font-size:14pt;letter-spacing:1px;">
 											<span style="border-bottom:1.5px solid #000000;padding-bottom:1px;">
 												CERTIFICATE OF ENROLLMENT
 											</span>
 										</p>
 									</div>
 
-									<div class="mx-[54px]" style="font-size:11pt;line-height:1.5;">
-										<p class="mt-0 mb-[14px] text-justify" style="text-indent:36px;">
+									<!-- BODY -->
+									<div style="margin:0 54px;font-size:11pt;line-height:1.5;">
+										<p style="margin:0 0 14px 0;text-align:justify;text-indent:36px;">
 											This is to certify that the learner with the information listed below is
 											officially enrolled at Rizal High School.
 										</p>
 
-										<table class="mb-[8px] w-full border-collapse">
+										<table style="width:100%;border-collapse:collapse;margin-bottom:8px;">
 											<tbody>
 												<tr>
 													<td
-														class="w-[1%] pr-[6px] pb-px align-bottom font-bold whitespace-nowrap"
+														style="white-space:nowrap;padding-right:6px;padding-bottom:2px;vertical-align:bottom;font-weight:bold;width:1%;"
 													>
 														LRN &amp; NAME:
 													</td>
-													<td class="border-b border-black pb-px align-bottom">
+													<td
+														style="border-bottom:1px solid #000000;padding-bottom:2px;vertical-align:bottom;"
+													>
 														{getLrnNameText()}
 													</td>
 												</tr>
 											</tbody>
 										</table>
 
-										<table class="mb-[8px] w-full border-collapse">
+										<table style="width:100%;border-collapse:collapse;margin-bottom:8px;">
 											<tbody>
 												<tr>
 													<td
-														class="w-[1%] pr-[6px] pb-px align-bottom font-bold whitespace-nowrap"
+														style="white-space:nowrap;padding-right:6px;padding-bottom:2px;vertical-align:bottom;font-weight:bold;width:1%;"
 													>
 														GRADE &amp; SECTION:
 													</td>
-													<td class="pb-px align-bottom">
-														<span class="underline">{gradeSection || ''}</span>
+													<td style="padding-bottom:2px;vertical-align:bottom;">
+														<span style="text-decoration:underline;">{gradeSection || ''}</span>
 													</td>
 												</tr>
 											</tbody>
 										</table>
 
-										<table class="mb-[12px] w-full border-collapse">
+										<table style="width:100%;border-collapse:collapse;margin-bottom:12px;">
 											<tbody>
 												<tr>
 													<td
-														class="w-[1%] pr-[6px] pb-px align-bottom font-bold whitespace-nowrap"
+														style="white-space:nowrap;padding-right:6px;padding-bottom:2px;vertical-align:bottom;font-weight:bold;width:1%;"
 													>
 														SCHOOL YEAR:
 													</td>
-													<td class="pb-px align-bottom">
-														<span class="underline">{schoolYear || ''}</span>
+													<td style="padding-bottom:2px;vertical-align:bottom;">
+														<span style="text-decoration:underline;">{schoolYear || ''}</span>
 													</td>
 												</tr>
 											</tbody>
 										</table>
 
-										<p class="m-0 text-justify" style="text-indent:36px;">
+										<p style="margin:0;text-align:justify;text-indent:36px;">
 											Issued this
-											<span class="underline"
-												>{certDate.day || ''}<sup style="font-size:7pt;text-decoration: underline ;"
+											<span style="text-decoration:underline;">
+												{certDate.day || ''}<sup style="font-size:7pt;text-decoration:underline;"
 													>{certDate.suffix || ''}</sup
 												>
-												day of {certDate.month || ''}, {certDate.year || ''}</span
-											>
+												day of {certDate.month || ''}, {certDate.year || ''}
+											</span>
 											at Dr. Sixto Antonio Avenue, Caniogan, Pasig City, Metro Manila, Philippines.
 										</p>
 									</div>
 
-									<div class="absolute right-[54px] text-center" style="bottom:180px;width:210px;">
+									<!-- SIGNATURE -->
+									<div
+										style="position:absolute;bottom:180px;right:54px;width:210px;text-align:center;"
+									>
 										<img
 											src={principalSignature}
 											alt="Signature"
-											class="mx-auto mb-0 block"
-											style="height:95px;width:80px;"
+											style="display:block;margin:0 auto;height:95px;width:80px;"
 											onerror={hideOnError}
 										/>
-										<p class="-mt-9 font-bold" style="font-size:10.5pt;">RICHARD T. SANTOS</p>
-										<p class="m-0 font-bold" style="font-size:10.5pt;">Principal IV</p>
+										<p style="margin:-36px 0 0 0;font-weight:bold;font-size:10.5pt;">
+											RICHARD T. SANTOS
+										</p>
+										<p style="margin:0;font-weight:bold;font-size:10.5pt;">Principal IV</p>
 									</div>
 
+									<!-- FOOTER -->
 									<div
-										class="absolute right-0 left-0 flex items-center justify-center px-[32px] pb-[10px]"
-										style="bottom:20px;"
+										style="position:absolute;bottom:20px;left:0;right:0;display:flex;justify-content:center;padding:0 32px 10px 32px;"
 									>
 										<div
-											class="mt-[6px] flex w-[490px] items-center gap-[10px] border-t border-black"
+											style="margin-top:6px;display:flex;align-items:center;gap:10px;border-top:1px solid #000000;width:490px;padding-top:6px;"
 										>
 											<img
 												src={depEdLogo}
 												alt="DepEd"
-												class="size-13 shrink-0 object-contain"
+												style="width:52px;height:52px;object-fit:contain;flex-shrink:0;"
 												onerror={hideOnError}
 											/>
 											<img
 												src={bagongPilipinas}
 												alt="Bagong Pilipinas"
-												class="size-13 shrink-0 object-contain"
+												style="width:52px;height:52px;object-fit:contain;flex-shrink:0;"
 												onerror={hideOnError}
 											/>
 											<img
 												src={rizalLogo}
 												alt="School Seal"
-												class="size-13 shrink-0 object-contain"
+												style="width:52px;height:52px;object-fit:contain;flex-shrink:0;"
 												onerror={hideOnError}
 											/>
 											<div
-												class="ml-[8px]"
-												style="font-family:'Times New Roman',Times,serif;font-size:9pt;line-height:1.6;"
+												style="margin-left:8px;font-family:'Times New Roman',Times,serif;font-size:9pt;line-height:1.6;"
 											>
-												<p class="m-0 font-bold">
+												<p style="margin:0;font-weight:bold;">
 													Address: Dr. Sixto Ant. Ave., Caniogan, Pasig City
 												</p>
-												<p class="m-0 font-bold">Tel: 8696-1251</p>
-												<p class="m-0 font-bold">
-													Email: <span class="font-bold underline" style="color:#1a1aaa;"
+												<p style="margin:0;font-weight:bold;">Tel: 8696-1251</p>
+												<p style="margin:0;font-weight:bold;">
+													Email: <span
+														style="font-weight:bold;text-decoration:underline;color:#1a1aaa;"
 														>305413@deped.gov.ph</span
 													>
 												</p>
-												<p class="m-0 font-bold italic">
+												<p style="margin:0;font-weight:bold;font-style:italic;">
 													"Strive for Excellence for the Glory of God"
 												</p>
 											</div>
