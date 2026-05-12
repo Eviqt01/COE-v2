@@ -13,11 +13,11 @@
 	} from '$lib/components/ui/card/index.js';
 	import { Separator } from '$lib/components/ui/separator/index.js';
 	import { Badge } from '$lib/components/ui/badge/index.js';
-	import DepedSeal from '$lib/images/depedSeal.png';
-	import principalSignature from '$lib/images/principalSignature.png';
-	import bagongPilipinas from '$lib/images/bagongPilipinas.png';
-	import depEdLogo from '$lib/images/depEdLogo.png';
-	import rizalLogo from '$lib/images/rizalLogo.png';
+	import DepedSeal from '$lib/images/depedSeal.png?inline';
+	import principalSignature from '$lib/images/principalSignature.png?inline';
+	import bagongPilipinas from '$lib/images/bagongPilipinas.png?inline';
+	import depEdLogo from '$lib/images/depEdLogo.png?inline';
+	import rizalLogo from '$lib/images/rizalLogo.png?inline';
 	import CalendarIcon from '@lucide/svelte/icons/calendar';
 	import Download from '@lucide/svelte/icons/download';
 	import Printer from '@lucide/svelte/icons/printer';
