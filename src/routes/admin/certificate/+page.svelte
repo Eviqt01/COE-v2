@@ -88,6 +88,8 @@
 
 	const studentServiceFAC = new StudentsServiceTB(page.data.supabase);
 
+	const getLrnNameText = (): string => (lrn.trim() ? `${lrn}   ${fullName}` : fullName);
+
 	const certDate = $derived(formatCertDate(value));
 	const isFormValid = $derived(
 		fullName.trim() !== '' &&
@@ -95,7 +97,15 @@
 			schoolYear.trim() !== '' &&
 			value !== undefined
 	);
-	const getLrnNameText = (): string => (lrn.trim() ? `${lrn}   ${fullName}` : fullName);
+	const lrnNameFontSize = $derived(
+		(() => {
+			const text = getLrnNameText();
+			if (text.length > 60) return '8pt';
+			if (text.length > 45) return '9pt';
+			if (text.length > 35) return '10pt';
+			return '11pt';
+		})()
+	);
 
 	const loadScript = (src: string): Promise<void> =>
 		new Promise((resolve, reject) => {
@@ -136,7 +146,6 @@
 		const source = document.getElementById('cert-preview-content');
 		if (!source) throw new Error('Certificate preview element not found.');
 
-		// Create an isolated wrapper at exact cert size off-screen
 		const wrapper = document.createElement('div');
 		wrapper.style.cssText = [
 			'position:fixed',
@@ -150,7 +159,6 @@
 			'z-index:-1'
 		].join(';');
 
-		// Deep clone the cert into the wrapper
 		const clone = source.cloneNode(true) as HTMLElement;
 		clone.style.transform = 'none';
 		clone.style.position = 'relative';
@@ -162,7 +170,6 @@
 		wrapper.appendChild(clone);
 		document.body.appendChild(wrapper);
 
-		// Let browser paint the clone
 		await new Promise((r) => requestAnimationFrame(r));
 		await new Promise((r) => requestAnimationFrame(r));
 
@@ -483,16 +490,10 @@
 							<div
 								style="transform: scale({scale}); transform-origin: top left; width: 595px; position: absolute; top: 0; left: 0;"
 							>
-								<!-- ============================================================
-								     CERTIFICATE CONTENT
-								     ALL styles are inline — NO Tailwind classes used here.
-								     This ensures html2canvas renders identically in production.
-								     ============================================================ -->
 								<div
 									id="cert-preview-content"
 									style="position:relative;overflow:hidden;background:#ffffff;color:#000000;width:595px;height:790px;font-family:'Times New Roman',Times,serif;box-sizing:border-box;"
 								>
-									<!-- HEADER -->
 									<div style="padding:18px 48px 0 48px;text-align:center;">
 										<img
 											src={DepedSeal}
@@ -542,14 +543,17 @@
 											<tbody>
 												<tr>
 													<td
-														style="white-space:nowrap;padding-right:6px;padding-bottom:2px;vertical-align:bottom;font-weight:bold;width:1%;"
+														style="white-space:nowrap;padding-right:6px;padding-bottom:2px;vertical-align:bottom;font-weight:bold;font-size:11pt;width:1%;"
 													>
 														LRN &amp; NAME:
 													</td>
 													<td
-														style="border-bottom:1px solid #000000;padding-bottom:2px;vertical-align:bottom;"
-													>
-														{getLrnNameText()}
+														style="padding-bottom:0px;vertical-align:bottom;font-size:{lrnNameFontSize}; line-height:1;"
+														><div
+															style="border-bottom:1px solid #000000;position:relative;top:-4px"
+														>
+															{getLrnNameText()}
+														</div>
 													</td>
 												</tr>
 											</tbody>
@@ -559,7 +563,7 @@
 											<tbody>
 												<tr>
 													<td
-														style="white-space:nowrap;padding-right:6px;padding-bottom:2px;vertical-align:bottom;font-weight:bold;width:1%;"
+														style="white-space:nowrap;padding-right:6px;padding-bottom:2px;vertical-align:bottom;font-weight:bold;font-size:11pt;width:1%;"
 													>
 														GRADE &amp; SECTION:
 													</td>
@@ -574,7 +578,7 @@
 											<tbody>
 												<tr>
 													<td
-														style="white-space:nowrap;padding-right:6px;padding-bottom:2px;vertical-align:bottom;font-weight:bold;width:1%;"
+														style="white-space:nowrap;padding-right:6px;padding-bottom:2px;vertical-align:bottom;font-weight:bold;font-size:11pt;width:1%;"
 													>
 														SCHOOL YEAR:
 													</td>
@@ -597,7 +601,6 @@
 										</p>
 									</div>
 
-									<!-- SIGNATURE -->
 									<div
 										style="position:absolute;bottom:180px;right:54px;width:210px;text-align:center;"
 									>

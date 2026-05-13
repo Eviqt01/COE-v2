@@ -48,7 +48,7 @@
 				</a>
 
 				<a
-					href="https://twitter.com/evivszombies"
+					href="https://x.com/EvivsZombies123"
 					target="_blank"
 					class="group flex flex-col items-center rounded-2xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl active:scale-95"
 				>
@@ -58,7 +58,7 @@
 						<Twitter class="size-6" />
 					</div>
 					<h3 class="mb-1 font-bold">X (Twitter)</h3>
-					<p class="text-sm text-muted-foreground">@evivszombies</p>
+					<p class="text-sm text-muted-foreground">EvivsZombies123</p>
 				</a>
 
 				<div

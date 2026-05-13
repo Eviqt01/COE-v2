@@ -5,7 +5,7 @@
 	import RecordsVault from '@lucide/svelte/icons/archive';
 	import ArchiveRestore from '@lucide/svelte/icons/archive-restore';
 	import RizalIcons from '$lib/images/rizalLogo.png';
-
+	import { onMount } from 'svelte';
 	import * as Sidebar from '$lib/components/ui/sidebar/index.js';
 
 	const items = [
@@ -18,6 +18,16 @@
 			icon: ArchiveRestore
 		}
 	] as const;
+
+	let creditName = $state('Jayjay Eviota');
+
+	onMount(() => {
+		const toggle = () => {
+			creditName = creditName === 'Jayjay Eviota' ? 'Jayjay Baguinaon Eviota' : 'Jayjay Eviota';
+			setTimeout(toggle, 5000);
+		};
+		setTimeout(toggle, 5000);
+	});
 </script>
 
 <Sidebar.Root>
@@ -52,5 +62,8 @@
 			</Sidebar.GroupContent>
 		</Sidebar.Group>
 	</Sidebar.Content>
+	<Sidebar.Separator />
+	<div class="p-2">
+		<h1 class="text-center text-xs text-muted-foreground">Developed by: {creditName}</h1>
+	</div>
 </Sidebar.Root>
-
