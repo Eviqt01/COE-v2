@@ -301,7 +301,7 @@
 </svelte:head>
 
 <section>
-	<div class="mb-4 w-full space-y-2 rounded-md border p-5">
+	<div class="animate-fade-in-up mb-4 w-full space-y-2 rounded-md border p-5" style="--stagger: 0;">
 		<h1 class="text-3xl font-bold tracking-tight">Certificate of Enrollment</h1>
 		<p class="text-muted-foreground">Fill in the required fields to generate the certificate.</p>
 	</div>
@@ -315,7 +315,7 @@
 		</div>
 	{/if}
 
-	<div class="grid gap-8 lg:grid-cols-12">
+	<div class="animate-fade-in-up grid gap-8 lg:grid-cols-12" style="--stagger: 1;">
 		<div class="space-y-6 lg:col-span-5 xl:col-span-4">
 			<Card>
 				<CardHeader>
@@ -470,7 +470,7 @@
 			</Card>
 		</div>
 
-		<div class="lg:col-span-7 xl:col-span-8">
+		<div class="animate-fade-in-scale lg:col-span-7 xl:col-span-8" style="--stagger: 2;">
 			<Card class="sticky top-6">
 				<CardHeader class="flex flex-row items-center justify-between space-y-0 pb-2">
 					<div>

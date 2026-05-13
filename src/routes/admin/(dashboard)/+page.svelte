@@ -17,7 +17,10 @@
 </script>
 
 <section class="flex flex-col gap-5">
-	<div class="flex items-center justify-center rounded-md border p-5">
+	<div
+		class="animate-fade-in-up flex items-center justify-center rounded-md border p-5"
+		style="--stagger: 0;"
+	>
 		<div class="mr-auto">
 			<h1 class="text-3xl font-bold">
 				Welcome, {data.user?.user_metadata.nickname}!
@@ -30,7 +33,7 @@
 		</Button>
 	</div>
 
-	<div class="flex items-center justify-center gap-2">
+	<div class="animate-fade-in-up flex items-center justify-center gap-2" style="--stagger: 1;">
 		<div>
 			<SearchDashboard />
 		</div>
@@ -48,19 +51,22 @@
 		</div>
 	</div>
 
-	<TableData />
+	<div class="animate-fade-in-scale" style="--stagger: 2;">
+		<TableData />
+	</div>
 
 	{#if !data.searchTerm}
-		<Paginator
-			initialPage={data.what_page}
-			totalCount={data.count ?? 0}
-			onPageChange={async (p) => {
-				const url = new URL(page.url);
-				url.searchParams.set('p', String(p));
-				const path = url.toString().replace(page.url.origin, '') as '/admin';
-				await goto(resolve(path), { noScroll: true, replaceState: true });
-			}}
-		/>
+		<div class="animate-fade-in-up" style="--stagger: 3;">
+			<Paginator
+				initialPage={data.what_page}
+				totalCount={data.count ?? 0}
+				onPageChange={async (p) => {
+					const url = new URL(page.url);
+					url.searchParams.set('p', String(p));
+					const path = url.toString().replace(page.url.origin, '') as '/admin';
+					await goto(resolve(path), { noScroll: true, replaceState: true });
+				}}
+			/>
+		</div>
 	{/if}
 </section>
-

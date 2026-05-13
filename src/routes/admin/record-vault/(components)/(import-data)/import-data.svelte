@@ -4,6 +4,7 @@
 	import { page } from '$app/state';
 	import { toast } from 'svelte-sonner';
 	import { invalidateAll } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import UploadIcon from '@lucide/svelte/icons/upload';
 
 	const studentService = new StudentsServiceTB(page.data.supabase);
@@ -110,12 +111,17 @@
 
 <input type="file" accept=".csv" class="hidden" bind:this={fileInput} onchange={handleFileChange} />
 
-<Button
-	variant="outline"
-	class="cursor-pointer"
-	onclick={() => fileInput.click()}
-	disabled={loading}
->
-	<UploadIcon class="mr-2 size-4" />
-	{loading ? 'Importing...' : 'Import Data'}
-</Button>
+<div class="flex flex-col gap-1">
+	<Button
+		variant="outline"
+		class="cursor-pointer"
+		onclick={() => fileInput.click()}
+		disabled={loading}
+	>
+		<UploadIcon class="mr-2 size-4" />
+		{loading ? 'Importing...' : 'Import Data'}
+	</Button>
+	<p class="text-center text-xs text-muted-foreground">
+		Can't import? <a href={resolve('/#help')} class="text-blue-500 hover:underline">Click here</a>
+	</p>
+</div>

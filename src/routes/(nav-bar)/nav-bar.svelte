@@ -9,7 +9,8 @@
 </script>
 
 <nav
-	class="sticky top-0 z-50 flex items-center justify-between border-b bg-background/95 px-6 py-4 backdrop-blur-md transition-all duration-300"
+	class="animate-fade-in-up sticky top-0 z-50 flex items-center justify-between border-b bg-background/95 px-6 py-4 backdrop-blur-md transition-all duration-300"
+	style="--stagger: 0;"
 >
 	<div class="flex items-center gap-3">
 		<div
@@ -19,7 +20,9 @@
 		</div>
 		<div class="flex flex-col leading-tight">
 			<span class="text-lg font-extrabold tracking-tight text-primary">Rizal High School</span>
-			<span class="text-[10px] font-medium tracking-widest uppercase text-muted-foreground">Since 1902</span>
+			<span class="text-[10px] font-medium tracking-widest text-muted-foreground uppercase"
+				>Since 1902</span
+			>
 		</div>
 	</div>
 
@@ -40,7 +43,6 @@
 		</Button>
 	</div>
 </nav>
-
 
 <main>
 	{@render children?.()}

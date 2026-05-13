@@ -12,14 +12,17 @@
 </script>
 
 <section class="flex flex-col gap-5">
-	<div class="flex items-center justify-center rounded-md border p-5">
+	<div
+		class="animate-fade-in-up flex items-center justify-center rounded-md border p-5"
+		style="--stagger: 0;"
+	>
 		<div class="mr-auto">
 			<h1 class="text-3xl font-bold">Records Vault</h1>
 			<p class="text-muted-foreground">Manage your Certificate</p>
 		</div>
 		<ImportData />
 	</div>
-	<div class="flex items-center justify-center gap-2">
+	<div class="animate-fade-in-up flex items-center justify-center gap-2" style="--stagger: 1;">
 		<div>
 			<SearchStudents />
 		</div>
@@ -41,22 +44,26 @@
 			/>
 		</div>
 	</div>
-	<Table {data} />
+	<div class="animate-fade-in-scale" style="--stagger: 2;">
+		<Table {data} />
+	</div>
 	{#if !data.searchTerm}
-		<Paginator
-			initialPage={data.what_page}
-			totalCount={data.count ?? 0}
-			onPageChange={async (p) => {
-				const url = new URL(page.url);
-				url.searchParams.set('p', String(p));
-				const path = url
-					.toString()
-					.replace(
-						page.url.origin,
-						''
-					) as '/admin/record-vault?p=<string>&o=<string>&search=<string>';
-				await goto(resolve(path), { noScroll: true, replaceState: true });
-			}}
-		/>
+		<div class="animate-fade-in-up" style="--stagger: 3;">
+			<Paginator
+				initialPage={data.what_page}
+				totalCount={data.count ?? 0}
+				onPageChange={async (p) => {
+					const url = new URL(page.url);
+					url.searchParams.set('p', String(p));
+					const path = url
+						.toString()
+						.replace(
+							page.url.origin,
+							''
+						) as '/admin/record-vault?p=<string>&o=<string>&search=<string>';
+					await goto(resolve(path), { noScroll: true, replaceState: true });
+				}}
+			/>
+		</div>
 	{/if}
 </section>

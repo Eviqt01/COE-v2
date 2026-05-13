@@ -30,7 +30,7 @@
 	<AppSidebar />
 
 	<section class="w-full">
-		<div class="flex items-center justify-center border-b p-1">
+		<div class="animate-fade-in-up flex items-center justify-center border-b p-1" style="--stagger: 0;">
 			<div class="mr-auto flex items-center justify-center gap-2">
 				<Sidebar.Trigger />
 				<DarkMode />

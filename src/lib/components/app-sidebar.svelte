@@ -42,8 +42,8 @@
 			<hr />
 			<Sidebar.GroupContent>
 				<Sidebar.Menu>
-					{#each items as item (item.title)}
-						<Sidebar.MenuItem>
+					{#each items as item, i (item.title)}
+						<Sidebar.MenuItem class="animate-fade-in-up" style="--stagger: {i};">
 							<Sidebar.MenuButton class="transition-all hover:translate-x-1 active:scale-95">
 								{#snippet child({ props })}
 									<a

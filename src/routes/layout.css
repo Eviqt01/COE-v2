@@ -132,3 +132,113 @@
 		@apply font-sans;
 	}
 }
+
+/* ── Admin page entrance animations ─────────────────────────── */
+@keyframes fade-in-up {
+	from {
+		opacity: 0;
+		transform: translateY(18px);
+	}
+	to {
+		opacity: 1;
+		transform: translateY(0);
+	}
+}
+
+@keyframes fade-in-scale {
+	from {
+		opacity: 0;
+		transform: scale(0.97);
+	}
+	to {
+		opacity: 1;
+		transform: scale(1);
+	}
+}
+
+@keyframes row-slide-in {
+	from {
+		opacity: 0;
+		transform: translateX(-12px);
+	}
+	to {
+		opacity: 1;
+		transform: translateX(0);
+	}
+}
+
+.animate-fade-in-up {
+	opacity: 0;
+	animation: fade-in-up 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	animation-delay: calc(var(--stagger, 0) * 80ms);
+}
+
+.animate-fade-in-scale {
+	opacity: 0;
+	animation: fade-in-scale 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	animation-delay: calc(var(--stagger, 0) * 80ms);
+}
+
+.animate-row-in {
+	opacity: 0;
+	animation: row-slide-in 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+	animation-delay: calc(var(--row-index, 0) * 50ms + 200ms);
+}
+
+/* ── Scroll-triggered animations (use with `use:inview` action) ── */
+.scroll-fade-up {
+	opacity: 0;
+	transform: translateY(28px);
+	transition:
+		opacity 0.7s cubic-bezier(0.16, 1, 0.3, 1),
+		transform 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+	transition-delay: calc(var(--stagger, 0) * 100ms);
+}
+
+.scroll-fade-up.in-view {
+	opacity: 1;
+	transform: translateY(0);
+}
+
+.scroll-scale-in {
+	opacity: 0;
+	transform: scale(0.92);
+	transition:
+		opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+		transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+	transition-delay: calc(var(--stagger, 0) * 120ms);
+}
+
+.scroll-scale-in.in-view {
+	opacity: 1;
+	transform: scale(1);
+}
+
+.scroll-slide-left {
+	opacity: 0;
+	transform: translateX(-30px);
+	transition:
+		opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+		transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+	transition-delay: calc(var(--stagger, 0) * 100ms);
+}
+
+.scroll-slide-left.in-view {
+	opacity: 1;
+	transform: translateX(0);
+}
+
+.scroll-slide-right {
+	opacity: 0;
+	transform: translateX(30px);
+	transition:
+		opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+		transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+	transition-delay: calc(var(--stagger, 0) * 100ms);
+}
+
+.scroll-slide-right.in-view {
+	opacity: 1;
+	transform: translateX(0);
+}
+

@@ -5,6 +5,8 @@
 	import Archive from '@lucide/svelte/icons/archive';
 	import Lightbulb from '@lucide/svelte/icons/lightbulb';
 
+	import { inview } from '$lib/actions/inview';
+
 	const steps = [
 		{
 			title: '1. Populate Record Vault',
@@ -39,7 +41,7 @@
 
 <section id="help" class="bg-background py-24">
 	<div class="container mx-auto px-6">
-		<div class="mb-16 text-center">
+		<div class="scroll-fade-up mb-16 text-center" style="--stagger: 0;" use:inview>
 			<h2 class="mb-4 text-4xl font-bold tracking-tight">How to Use the System</h2>
 			<p class="mx-auto max-w-2xl text-muted-foreground">
 				Get started with the Rizal High School Certificate Management System in four easy steps.
@@ -48,9 +50,11 @@
 		</div>
 
 		<div class="grid gap-8 md:grid-cols-2 lg:grid-cols-4">
-			{#each steps as step (step.title)}
+			{#each steps as step, i (step.title)}
 				<div
-					class="relative flex flex-col items-center rounded-3xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl"
+					class="scroll-scale-in relative flex flex-col items-center rounded-3xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl"
+					style="--stagger: {i + 1};"
+					use:inview
 				>
 					<div
 						class="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl {step.color} text-white shadow-lg shadow-{step.color.split(
@@ -73,7 +77,9 @@
 		</div>
 
 		<div
-			class="mt-16 flex flex-col items-center justify-center rounded-3xl border border-primary/10 bg-primary/5 p-8 text-center backdrop-blur-sm"
+			class="scroll-fade-up mt-16 flex flex-col items-center justify-center rounded-3xl border border-primary/10 bg-primary/5 p-8 text-center backdrop-blur-sm"
+			style="--stagger: 5;"
+			use:inview
 		>
 			<div class="flex items-center">
 				<Lightbulb class="size-8" />

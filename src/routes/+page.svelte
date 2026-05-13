@@ -6,7 +6,7 @@
 </script>
 
 <NavBar>
-	<section class="scroll-smooth">
+	<section>
 		<Hero></Hero>
 		<section id="contact">
 			<Contact></Contact>

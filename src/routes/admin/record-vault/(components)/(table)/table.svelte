@@ -24,8 +24,8 @@
 			</Table.Row>
 		</Table.Header>
 		<Table.Body>
-			{#each data.students ?? [] as student (student)}
-				<Table.Row>
+			{#each data.students ?? [] as student, i (student)}
+				<Table.Row class="animate-row-in" style="--row-index: {i};">
 					<Table.Cell class="text-center font-medium">{student.lrn}</Table.Cell>
 					<Table.Cell class="text-center">{student.full_name}</Table.Cell>
 					<Table.Cell class="text-center">{student.gender}</Table.Cell>

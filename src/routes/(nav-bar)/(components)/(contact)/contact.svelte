@@ -4,12 +4,13 @@
 	import Facebook from '@tabler/icons-svelte/icons/brand-facebook';
 	import Instagram from '@tabler/icons-svelte/icons/brand-instagram';
 	import Twitter from '@tabler/icons-svelte/icons/brand-x';
+	import { inview } from '$lib/actions/inview';
 	let { children }: { children?: Snippet } = $props();
 </script>
 
 <section id="contact" class="bg-muted/30 py-24">
 	<div class="container mx-auto px-6">
-		<div class="mb-16 text-center">
+		<div class="mb-16 text-center scroll-fade-up" style="--stagger: 0;" use:inview>
 			<h2 class="mb-4 text-4xl font-bold tracking-tight">Get in Touch</h2>
 			<p class="mx-auto max-w-2xl text-muted-foreground">
 				Have questions about enrollment or school activities? Reach out to us through any of our
@@ -22,7 +23,9 @@
 				<a
 					href="https://www.facebook.com/jayjay.eviota"
 					target="_blank"
-					class="group flex flex-col items-center rounded-2xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl active:scale-95"
+					class="scroll-scale-in group flex flex-col items-center rounded-2xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl active:scale-95"
+					style="--stagger: 1;"
+					use:inview
 				>
 					<div
 						class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-blue-100 text-blue-600 transition-colors group-hover:bg-blue-600 group-hover:text-white"
@@ -36,7 +39,9 @@
 				<a
 					href="https://instagram.com/evivszombies"
 					target="_blank"
-					class="group flex flex-col items-center rounded-2xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl active:scale-95"
+					class="scroll-scale-in group flex flex-col items-center rounded-2xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl active:scale-95"
+					style="--stagger: 2;"
+					use:inview
 				>
 					<div
 						class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-pink-100 text-pink-600 transition-colors group-hover:bg-pink-600 group-hover:text-white"
@@ -50,7 +55,9 @@
 				<a
 					href="https://x.com/EvivsZombies123"
 					target="_blank"
-					class="group flex flex-col items-center rounded-2xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl active:scale-95"
+					class="scroll-scale-in group flex flex-col items-center rounded-2xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl active:scale-95"
+					style="--stagger: 3;"
+					use:inview
 				>
 					<div
 						class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-slate-100 text-slate-900 transition-colors group-hover:bg-slate-900 group-hover:text-white"
@@ -62,7 +69,9 @@
 				</a>
 
 				<div
-					class="group flex flex-col items-center rounded-2xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl"
+					class="scroll-scale-in group flex flex-col items-center rounded-2xl border bg-card p-8 text-center transition-all hover:border-primary hover:shadow-xl"
+					style="--stagger: 4;"
+					use:inview
 				>
 					<div
 						class="mb-4 flex h-12 w-12 items-center justify-center rounded-full bg-green-100 text-green-600 transition-colors group-hover:bg-green-600 group-hover:text-white"
@@ -77,3 +86,4 @@
 	</div>
 	{@render children?.()}
 </section>
+

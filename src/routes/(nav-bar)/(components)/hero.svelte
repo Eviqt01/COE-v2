@@ -3,6 +3,7 @@
 	import rizalSchool from '$lib/images/school.png';
 	import type { Snippet } from 'svelte';
 	import { fly } from 'svelte/transition';
+	import { inview } from '$lib/actions/inview';
 
 	let { children }: { children?: Snippet } = $props();
 </script>
@@ -16,7 +17,9 @@
 	<div class="relative z-10 container mx-auto px-6">
 		<div class="max-w-3xl text-white">
 			<div
-				class="mb-6 inline-flex items-center gap-2 rounded-full bg-primary/20 px-4 py-1.5 text-sm font-semibold text-primary-foreground ring-1 ring-white/20 backdrop-blur-md"
+				class="scroll-fade-up mb-6 inline-flex items-center gap-2 rounded-full bg-primary/20 px-4 py-1.5 text-sm font-semibold text-primary-foreground ring-1 ring-white/20 backdrop-blur-md"
+				style="--stagger: 0;"
+				use:inview
 				in:fly={{ y: -20, duration: 800, delay: 200 }}
 			>
 				<School class="size-4 text-accent" />
@@ -26,7 +29,9 @@
 			</div>
 
 			<h1
-				class="mb-6 text-5xl font-black tracking-tight drop-shadow-2xl md:text-8xl"
+				class="scroll-fade-up mb-6 text-5xl font-black tracking-tight drop-shadow-2xl md:text-8xl"
+				style="--stagger: 1;"
+				use:inview
 				in:fly={{ x: -30, duration: 800, delay: 400 }}
 			>
 				<span
@@ -40,7 +45,9 @@
 			</h1>
 
 			<p
-				class="mb-10 max-w-xl text-lg leading-relaxed font-medium text-gray-200 drop-shadow-lg md:text-xl"
+				class="scroll-fade-up mb-10 max-w-xl text-lg leading-relaxed font-medium text-gray-200 drop-shadow-lg md:text-xl"
+				style="--stagger: 2;"
+				use:inview
 				in:fly={{ y: 20, duration: 800, delay: 600 }}
 			>
 				Empowering students through innovative learning, character development, and academic
