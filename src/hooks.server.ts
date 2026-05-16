@@ -56,9 +56,14 @@ export const handle: Handle = async ({ event, resolve }) => {
 
 	const path = event.url.pathname;
 
-	if (!user && path.startsWith('/admin')) redirect(302, '/login');
+	if ((!user && path.startsWith('/admin')) || path === '/auth/complete-profile')
+		redirect(302, '/login');
 	if (user && path === '/login' && event.url.searchParams.get('q') !== 'reset-password')
 		redirect(302, '/admin');
+
+	if (user && path === '/auth/complete-profile' && user.user_metadata?.username) {
+		redirect(302, '/admin');
+	}
 
 	if (!user && path === '/login' && event.url.searchParams.get('q') === 'reset-password') {
 		redirect(302, '/login');

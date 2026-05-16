@@ -3,19 +3,22 @@
 	import { Input } from '$lib/components/ui/input/index';
 	import * as Card from '$lib/components/ui/card/index';
 	import { Button } from '$lib/components/ui/button/index';
-	import type { LoginSchema } from '../../schema';
-	import { loginschema } from '../../schema';
+	import type { LoginSchema, MagicLinkSchema } from '../../schema';
+	import { loginschema, magicLinkSchema } from '../../schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
-	import { Mail, Lock, LogIn, Loader2 } from '@lucide/svelte';
+	import { Mail, Lock, LogIn, Loader2, Sparkles } from '@lucide/svelte';
 
 	interface Props {
 		loginForm: SuperValidated<Infer<LoginSchema>>;
+		magicLinkForm: SuperValidated<Infer<MagicLinkSchema>>;
 	}
 
-	const { loginForm }: Props = $props();
+	const { loginForm, magicLinkForm }: Props = $props();
+
+	let authMethod = $state<'password' | 'magic'>('password');
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(loginForm, {
@@ -37,6 +40,25 @@
 	});
 
 	const { form: formData, enhance, submitting, delayed } = form;
+
+	// svelte-ignore state_referenced_locally
+	const magicForm = superForm(magicLinkForm, {
+		validators: zod4Client(magicLinkSchema),
+		id: 'magic-link-form',
+		onUpdate: ({ result }) => {
+			const { status, data } = result;
+			if (status === 200) {
+				toast.success(data.msg);
+			}
+		}
+	});
+
+	const {
+		form: magicData,
+		enhance: magicEnhance,
+		submitting: magicSubmitting,
+		delayed: magicDelayed
+	} = magicForm;
 </script>
 
 <Card.Root
@@ -44,9 +66,9 @@
 >
 	<Card.Header class="space-y-1 text-center">
 		<Card.Title class="text-2xl font-bold tracking-tight">Welcome back</Card.Title>
-		<Card.Description>Enter your credentials to access your account</Card.Description>
+		<Card.Description>Choose your preferred login method</Card.Description>
 	</Card.Header>
-	<Card.Content>
+	<Card.Content class="grid gap-4">
 		<form method="POST" action="?/loginEvent" use:enhance class="grid gap-4">
 			<Form.Field {form} name="email">
 				<Form.Control>
@@ -108,10 +130,10 @@
 		class="flex flex-col gap-4 border-t border-slate-100 bg-slate-50/50 p-6 text-center dark:border-slate-800 dark:bg-slate-900/50"
 	>
 		<p class="text-sm text-muted-foreground">
-			Don't have an account yet?
-			<a href={resolve('/login?q=register')} class="font-semibold text-primary hover:underline">
-				Register here
-			</a>
+			Need an account?
+			<span class="block font-semibold text-primary">
+				Contact the Admin on social media to request access.
+			</span>
 		</p>
 	</Card.Footer>
 </Card.Root>

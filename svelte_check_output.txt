@@ -1,0 +1,44 @@
+Loading svelte-check in workspace: /Users/mikejohneviota/Desktop/my-project
+Getting Svelte diagnostics...
+
+/Users/mikejohneviota/Desktop/my-project/src/routes/admin/(dashboard)/(components)/(invite-user)/invite-user.svelte:16:13
+Error: Type '({ props }: { props: any; }) => any' is not assignable to type 'Snippet<[]>'.
+  Target signature provides too few arguments. Expected 1 or more, but got 0. (ts)
+	<Sheet.Trigger asChild>
+		{#snippet children({ props })}
+			<Button {...props} variant="outline" class="gap-2">
+
+/Users/mikejohneviota/Desktop/my-project/src/routes/admin/(dashboard)/(components)/(invite-user)/invite-user.svelte:16:24
+Error: Binding element 'props' implicitly has an 'any' type. (ts)
+	<Sheet.Trigger asChild>
+		{#snippet children({ props })}
+			<Button {...props} variant="outline" class="gap-2">
+
+/Users/mikejohneviota/Desktop/my-project/src/routes/admin/(dashboard)/(components)/(invite-user)/invite-user.svelte:40:21
+Error: Argument of type '{}' is not assignable to parameter of type 'string | AnyComponent'. (ts)
+					if (result.type === 'success') {
+						toast.success(result.data?.msg ?? 'Invitation sent!');
+						open = false;
+
+/Users/mikejohneviota/Desktop/my-project/src/routes/admin/(dashboard)/(components)/(invite-user)/invite-user.svelte:43:19
+Error: Argument of type '{}' is not assignable to parameter of type 'string | AnyComponent'. (ts)
+					} else if (result.type === 'failure') {
+						toast.error(result.data?.msg ?? 'Failed to send invitation');
+					}
+
+/Users/mikejohneviota/Desktop/my-project/src/routes/login/(components)/(login)/login.svelte:24:25
+Warn: This reference only captures the initial value of `loginForm`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+	// Password Form
+	const form = superForm(loginForm, {
+		validators: zod4Client(loginschema),
+
+/Users/mikejohneviota/Desktop/my-project/src/routes/login/(components)/(login)/login.svelte:45:30
+Warn: This reference only captures the initial value of `magicLinkForm`. Did you mean to reference it inside a closure instead?
+https://svelte.dev/e/state_referenced_locally (svelte)
+	// Magic Link Form
+	const magicForm = superForm(magicLinkForm, {
+		validators: zod4Client(magicLinkSchema),
+
+====================================
+svelte-check found 4 errors and 2 warnings in 2 files

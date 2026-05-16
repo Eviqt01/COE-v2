@@ -23,14 +23,16 @@
 	>
 		<div class="mr-auto">
 			<h1 class="text-3xl font-bold">
-				Welcome, {data.user?.user_metadata.nickname}!
+				Welcome, {data.user?.user_metadata.username}!
 			</h1>
 			<p class="text-muted-foreground">Manage your Issued Certificates</p>
 		</div>
-		<Button onclick={gotoCertificate} variant="outline" class="cursor-pointer">
-			<PlusIcon class="mr-2 size-4" />
-			Create Certificate
-		</Button>
+		<div class="flex gap-2">
+			<Button onclick={gotoCertificate} variant="outline" class="cursor-pointer">
+				<PlusIcon class="mr-2 size-4" />
+				Create Certificate
+			</Button>
+		</div>
 	</div>
 
 	<div class="animate-fade-in-up flex items-center justify-center gap-2" style="--stagger: 1;">

@@ -1,7 +1,7 @@
 import { z } from 'zod';
 
 const base = {
-	email: z.email('Please enter a valid Email.'),
+	email: z.string().email('Please enter a valid Email.'),
 	password: z.string('Must enter a password').min(7, 'Must choose a strong password.').max(15)
 };
 
@@ -42,7 +42,12 @@ export const resetPasswordSchema = z
 	});
 export const forgotpasswordSchema = z.object(base).omit({ password: true });
 
+export const magicLinkSchema = z.object({
+	email: z.string().email('Please enter a valid email.')
+});
+
 export type LoginSchema = typeof loginschema;
 export type RegisterSchema = typeof registerschema;
 export type ForgotPasswordSchema = typeof forgotpasswordSchema;
 export type ResetPasswordSchema = typeof resetPasswordSchema;
+export type MagicLinkSchema = typeof magicLinkSchema;

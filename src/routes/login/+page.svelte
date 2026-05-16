@@ -60,7 +60,7 @@
 			</div>
 		{:else}
 			<div in:fly={{ y: 20, duration: 400 }} out:fade={{ duration: 200 }}>
-				<Login loginForm={data.loginForm} />
+				<Login loginForm={data.loginForm} magicLinkForm={data.magicLinkForm} />
 			</div>
 		{/if}
 	</div>

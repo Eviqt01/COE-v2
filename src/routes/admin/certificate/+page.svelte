@@ -25,7 +25,7 @@
 	import { CalendarDate, getLocalTimeZone, type DateValue } from '@internationalized/date';
 	import { untrack, onMount } from 'svelte';
 	import { page } from '$app/state';
-	import { StudentsServiceTB } from '$lib/services/students';
+	import { StudentsServiceTB, type Students } from '$lib/services/students';
 	import { goto } from '$app/navigation';
 	import { resolve } from '$app/paths';
 	import { toast } from 'svelte-sonner';
@@ -196,6 +196,38 @@
 		return pdf.output('blob');
 	};
 
+	const saveToDashboard = async () => {
+		let dashboardData: Partial<Students> = {
+			lrn: lrn,
+			full_name: fullName,
+			grade_section: gradeSection,
+			school_year: schoolYear,
+			created_at: value ? value.toDate(getLocalTimeZone()).toISOString() : new Date().toISOString()
+		};
+
+		if (studentId) {
+			const { data: student } = await studentServiceFAC.getStudentById(studentId);
+			if (student) {
+				dashboardData = {
+					...student,
+					...dashboardData
+				};
+			}
+		}
+
+		const { error } = (await page.data.supabase?.from('dashboard').upsert(dashboardData)) ?? {
+			error: new Error('Supabase client not initialized')
+		};
+
+		if (!error) {
+			toast.success('Certificate issued and recorded in dashboard.');
+			goto(resolve('/admin'));
+		} else {
+			console.error('Failed to record in dashboard:', error);
+			toast.error('Failed to record in dashboard.');
+		}
+	};
+
 	const handleDownload = async (): Promise<void> => {
 		if (!librariesLoaded) {
 			errorMsg = 'Libraries not ready, please try again.';
@@ -211,26 +243,7 @@
 			a.download = `Certificate_of_Enrollment_${lrn || fullName.replace(/\s+/g, '_')}.pdf`;
 			a.click();
 
-			if (studentId) {
-				const { data: student } = await studentServiceFAC.getStudentById(studentId);
-				if (student) {
-					const { error } = (await page.data.supabase?.from('dashboard').upsert({
-						...student,
-						lrn: lrn,
-						full_name: fullName,
-						grade_section: gradeSection,
-						school_year: schoolYear,
-						created_at: new Date().toISOString()
-					})) ?? { error: new Error('Supabase client not initialized') };
-
-					if (!error) {
-						toast.success('Certificate downloaded and copied to dashboard.');
-						goto(resolve('/admin'));
-					} else {
-						console.error('Failed to copy to dashboard:', error);
-					}
-				}
-			}
+			await saveToDashboard();
 
 			setTimeout(() => URL.revokeObjectURL(url), 60_000);
 		} catch (err: unknown) {
@@ -253,26 +266,7 @@
 			const win = window.open(url, '_blank');
 			if (win) win.addEventListener('load', () => win.print());
 
-			if (studentId) {
-				const { data: student } = await studentServiceFAC.getStudentById(studentId);
-				if (student) {
-					const { error } = (await page.data.supabase?.from('dashboard').upsert({
-						...student,
-						lrn: lrn,
-						full_name: fullName,
-						grade_section: gradeSection,
-						school_year: schoolYear,
-						created_at: new Date().toISOString()
-					})) ?? { error: new Error('Supabase client not initialized') };
-
-					if (!error) {
-						toast.success('Certificate issued and copied to dashboard.');
-						goto(resolve('/admin'));
-					} else {
-						console.error('Failed to copy to dashboard:', error);
-					}
-				}
-			}
+			await saveToDashboard();
 
 			setTimeout(() => URL.revokeObjectURL(url), 60_000);
 		} catch (err: unknown) {
