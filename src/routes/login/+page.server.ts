@@ -1,6 +1,6 @@
 import type { Actions, PageServerLoad } from './$types.js';
 import { superValidate } from 'sveltekit-superforms';
-import { loginschema, registerschema, forgotpasswordSchema, resetPasswordSchema, magicLinkSchema } from './schema';
+import { loginschema, registerschema, forgotpasswordSchema, resetPasswordSchema } from './schema';
 import { zod4 } from 'sveltekit-superforms/adapters';
 import { fail } from '@sveltejs/kit';
 
@@ -9,8 +9,7 @@ export const load: PageServerLoad = async () => {
 		loginForm: await superValidate(zod4(loginschema)),
 		registerForm: await superValidate(zod4(registerschema)),
 		forgotpasswordForm: await superValidate(zod4(forgotpasswordSchema)),
-		resetPasswordForm: await superValidate(zod4(resetPasswordSchema)),
-		magicLinkForm: await superValidate(zod4(magicLinkSchema))
+		resetPasswordForm: await superValidate(zod4(resetPasswordSchema))
 	};
 };
 
@@ -45,7 +44,7 @@ export const actions: Actions = {
 			password: credentialForm.data.password,
 			options: {
 				data: {
-					username: credentialForm.data.username
+					nickname: credentialForm.data.username
 				}
 			}
 		});

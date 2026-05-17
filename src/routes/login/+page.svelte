@@ -46,22 +46,24 @@
 			</div>
 		</div>
 
-		{#if whatParams === 'register'}
-			<div in:fly={{ y: 20, duration: 400 }} out:fade={{ duration: 200 }}>
-				<Register registerForm={data.registerForm} />
-			</div>
-		{:else if whatParams === 'forgot-password'}
-			<div in:fly={{ y: 20, duration: 400 }} out:fade={{ duration: 200 }}>
-				<ForgotPassword forgotpasswordForm={data.forgotpasswordForm} />
-			</div>
-		{:else if whatParams === 'reset-password'}
-			<div in:fly={{ y: 20, duration: 400 }} out:fade={{ duration: 200 }}>
-				<ResetPassword resetPasswordForm={data.resetPasswordForm} />
-			</div>
-		{:else}
-			<div in:fly={{ y: 20, duration: 400 }} out:fade={{ duration: 200 }}>
-				<Login loginForm={data.loginForm} magicLinkForm={data.magicLinkForm} />
-			</div>
-		{/if}
+		<div class="grid">
+			{#if whatParams === 'register'}
+				<div class="col-start-1 row-start-1" in:fly={{ y: 20, duration: 400 }} out:fade={{ duration: 200 }}>
+					<Register registerForm={data.registerForm} />
+				</div>
+			{:else if whatParams === 'forgot-password'}
+				<div class="col-start-1 row-start-1" in:fly={{ y: 20, duration: 400 }} out:fade={{ duration: 200 }}>
+					<ForgotPassword forgotpasswordForm={data.forgotpasswordForm} />
+				</div>
+			{:else if whatParams === 'reset-password'}
+				<div class="col-start-1 row-start-1" in:fly={{ y: 20, duration: 400 }} out:fade={{ duration: 200 }}>
+					<ResetPassword resetPasswordForm={data.resetPasswordForm} />
+				</div>
+			{:else}
+				<div class="col-start-1 row-start-1" in:fly={{ y: 20, duration: 400 }} out:fade={{ duration: 200 }}>
+					<Login loginForm={data.loginForm} />
+				</div>
+			{/if}
+		</div>
 	</div>
 </main>

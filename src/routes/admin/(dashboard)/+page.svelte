@@ -23,7 +23,7 @@
 	>
 		<div class="mr-auto">
 			<h1 class="text-3xl font-bold">
-				Welcome, {data.user?.user_metadata.username}!
+				Welcome, {data.user?.user_metadata?.nickname}!
 			</h1>
 			<p class="text-muted-foreground">Manage your Issued Certificates</p>
 		</div>

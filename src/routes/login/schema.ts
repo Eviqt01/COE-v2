@@ -12,9 +12,9 @@ export const registerschema = z
 	.extend({
 		username: z
 			.string('Please enter a nickname.')
-			.max(10, 'Minimum character is 10')
+			.max(15, 'Maximum character is 15')
 			.min(5, 'Minimum character is 5.'),
-		confirmPassword: z.string()
+		confirmPassword: z.string('Please confirm your password')
 	})
 	.superRefine(({ password, confirmPassword }, ctx) => {
 		if (password !== confirmPassword) {
@@ -42,12 +42,7 @@ export const resetPasswordSchema = z
 	});
 export const forgotpasswordSchema = z.object(base).omit({ password: true });
 
-export const magicLinkSchema = z.object({
-	email: z.string().email('Please enter a valid email.')
-});
-
 export type LoginSchema = typeof loginschema;
 export type RegisterSchema = typeof registerschema;
 export type ForgotPasswordSchema = typeof forgotpasswordSchema;
 export type ResetPasswordSchema = typeof resetPasswordSchema;
-export type MagicLinkSchema = typeof magicLinkSchema;

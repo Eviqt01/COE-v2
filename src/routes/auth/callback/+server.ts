@@ -8,11 +8,6 @@ export const GET: RequestHandler = async ({ url, locals: { supabase } }) => {
 	if (code) {
 		const { data, error } = await supabase.auth.exchangeCodeForSession(code);
 		if (!error && data.user) {
-			const metadata = data.user.user_metadata;
-			// If metadata is missing, redirect to complete profile
-			if (!metadata?.username) {
-				throw redirect(303, '/auth/complete-profile');
-			}
 			throw redirect(303, `/${next.slice(1)}`);
 		}
 	}

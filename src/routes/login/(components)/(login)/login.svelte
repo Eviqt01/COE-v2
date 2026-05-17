@@ -3,8 +3,8 @@
 	import { Input } from '$lib/components/ui/input/index';
 	import * as Card from '$lib/components/ui/card/index';
 	import { Button } from '$lib/components/ui/button/index';
-	import type { LoginSchema, MagicLinkSchema } from '../../schema';
-	import { loginschema, magicLinkSchema } from '../../schema';
+	import type { LoginSchema } from '../../schema';
+	import { loginschema } from '../../schema';
 	import { type SuperValidated, type Infer, superForm } from 'sveltekit-superforms';
 	import { zod4Client } from 'sveltekit-superforms/adapters';
 	import { resolve } from '$app/paths';
@@ -13,12 +13,9 @@
 
 	interface Props {
 		loginForm: SuperValidated<Infer<LoginSchema>>;
-		magicLinkForm: SuperValidated<Infer<MagicLinkSchema>>;
 	}
 
-	const { loginForm, magicLinkForm }: Props = $props();
-
-	let authMethod = $state<'password' | 'magic'>('password');
+	const { loginForm }: Props = $props();
 
 	// svelte-ignore state_referenced_locally
 	const form = superForm(loginForm, {
@@ -40,25 +37,6 @@
 	});
 
 	const { form: formData, enhance, submitting, delayed } = form;
-
-	// svelte-ignore state_referenced_locally
-	const magicForm = superForm(magicLinkForm, {
-		validators: zod4Client(magicLinkSchema),
-		id: 'magic-link-form',
-		onUpdate: ({ result }) => {
-			const { status, data } = result;
-			if (status === 200) {
-				toast.success(data.msg);
-			}
-		}
-	});
-
-	const {
-		form: magicData,
-		enhance: magicEnhance,
-		submitting: magicSubmitting,
-		delayed: magicDelayed
-	} = magicForm;
 </script>
 
 <Card.Root
@@ -130,10 +108,10 @@
 		class="flex flex-col gap-4 border-t border-slate-100 bg-slate-50/50 p-6 text-center dark:border-slate-800 dark:bg-slate-900/50"
 	>
 		<p class="text-sm text-muted-foreground">
-			Need an account?
-			<span class="block font-semibold text-primary">
-				Contact the Admin on social media to request access.
-			</span>
+			Don't have an account yet?
+			<a href={resolve('/login?q=register')} class="font-semibold text-primary hover:underline">
+				Register here
+			</a>
 		</p>
 	</Card.Footer>
 </Card.Root>
